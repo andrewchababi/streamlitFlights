@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd
 from services import flight_gate_df, analytics  # Replace with actual module name
 
+st.set_page_config(layout="wide")
+
 # Initialize session state
 if 'current_page' not in st.session_state:
     st.session_state.current_page = "home"
