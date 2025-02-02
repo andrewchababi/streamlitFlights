@@ -102,11 +102,11 @@ def custom_page():
 # Sidebar Navigation
 with st.sidebar:
     st.header("Navigation")
-    if st.button("🏠 Home"):
+    if st.button("🏢 Home"):
         st.session_state.current_page = "home"
-    if st.button("💰 C&P Analysis"):
+    if st.button("🥃 C&P Analysis"):
         st.session_state.current_page = "cp"
-    if st.button("📊 UBar Analysis"):
+    if st.button("🍷 UBar Analysis"):
         st.session_state.current_page = "ubar"
     if st.button("⚙️ Custom Analysis"):
         st.session_state.current_page = "custom"
