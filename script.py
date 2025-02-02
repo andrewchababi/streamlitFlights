@@ -2,6 +2,8 @@ import json
 import pandas as pd
 import cloudscraper
 import sqlite3
+import streamlit as st
+
 
 # Define the URL and payload for fetching flight data
 url = "https://www.admtl.com/en-CA/webruntime/api/apex/execute?language=en-CA&asGuest=true&htmlEncode=false"
@@ -45,6 +47,7 @@ def format_json_data(json_data):
 def convert_to_dataframe(json_data, key='returnValue', section='flightsForToday'):
     return pd.json_normalize(json_data[key][section])
 
+@st.cache_data(ttl=3600)
 def process_flights_to_df(url):
     response = fetch_flight_data(url)
     print(f"HTTP Status Code: {response.status_code}")
@@ -80,10 +83,3 @@ def save_to_sql(df):
     connection.close()
     print("Data stored in SQLite database successfully.")
 
-def main():
-
-    # Process flights and store them
-    flights_df = process_flights_to_df(url)
-    save_to_sql(flights_df)
-
-main()

@@ -1,14 +1,12 @@
 import streamlit as st
 import pandas as pd
-from services import flight_gate_df, analytics  # Replace with actual module name
+from services import flight_gate_df, analytics
 
 st.set_page_config(layout="wide")
 
 # Initialize session state
 if 'current_page' not in st.session_state:
     st.session_state.current_page = "home"
-if 'custom_gates' not in st.session_state:
-    st.session_state.custom_gates = [None, None]
 
 # Page rendering functions
 def home_page():
@@ -25,32 +23,24 @@ def home_page():
     Use the sidebar to navigate between different analytical views.
     """)
 
-# Modified show_analytics function and page layouts
-def show_analytics(df, col):
+# Remove @st.cache_data from show_analytics
+def show_analytics(df):
     top_dest, total, pre_close, close, rh = analytics(df)
     
-    with col:
-        # Key Metrics
-        col.subheader("Key Performance Indicators")
-        cols = col.columns(3)
-        with cols[0]:
-            col.metric("Total Flights", total)
-        with cols[1]:
-            col.metric("Prep Closing", pre_close)
-        with cols[2]:
-            col.metric("Final Closing", close)
-        
-        # Top Destinations
-        col.subheader("Top 3 Destinations")
-        col.dataframe(top_dest, use_container_width=True, hide_index= True)
-        
-        # Rush Hours
-        col.subheader("Peak Operational Hours")
-        col.bar_chart(rh.set_index('time_window'), horizontal=True)
+    # Create layout inside the function
+    st.metric("Total Flights", total)
+    st.metric("Prep Closing", pre_close)
+    st.metric("Final Closing", close)
+    
+    st.subheader("Top 3 Destinations")
+    st.dataframe(top_dest, use_container_width=True, hide_index=True)
+    
+    st.subheader("Peak Operational Hours")
+    st.bar_chart(rh.set_index('time_window'), horizontal=True)
 
 def cp_page():
-    st.title("Cost & Performance Analysis (Gates 62-69)")
-    data = flight_gate_df(62, 69)
+    st.title("Carlos and Pepes Flights (62-68)")
+    data = flight_gate_df(62, 68)
     
     if isinstance(data, pd.DataFrame):
         col1, col2 = st.columns([3, 2])  # Wider left column for data
@@ -59,16 +49,16 @@ def cp_page():
             st.dataframe(data.style.format({'gate': '{:.0f}'}), 
                         use_container_width=True,
                         height=600,
-                        hide_index= True)
+                        hide_index=True)
         
         with col2:
-            show_analytics(data, col2)
+            show_analytics(data)  # Pass the data directly
     else:
         st.error(data)
 
 def ubar_page():
-    st.title("Utility Bar Analysis (Gates 52-69)")
-    data = flight_gate_df(52, 69)
+    st.title("Ubar Flights (52-68)")
+    data = flight_gate_df(52, 68)
     
     if isinstance(data, pd.DataFrame):
         col1, col2 = st.columns([3, 2])
@@ -77,15 +67,15 @@ def ubar_page():
             st.dataframe(data.style.format({'gate': '{:.0f}'}),
                         use_container_width=True,
                         height=600,
-                        hide_index= True)
+                        hide_index=True)
         
         with col2:
-            show_analytics(data, col2)
+            show_analytics(data)  # Pass the data directly
     else:
         st.error(data)
 
 def custom_page():
-    st.title("Custom Gate Analysis")
+    st.title("Custom Gate Flights Analysis")
     with st.expander("Gate Selection", expanded=True):
         col1, col2 = st.columns(2)
         with col1:
@@ -102,12 +92,13 @@ def custom_page():
                 st.dataframe(data.style.format({'gate': '{:.0f}'}),
                             use_container_width=True,
                             height=600,
-                            hide_index= True)
+                            hide_index=True)
             
             with right:
-                show_analytics(data, right)
+                show_analytics(data)  # Pass the data directly
         else:
             st.error(data)
+
 # Sidebar Navigation
 with st.sidebar:
     st.header("Navigation")
@@ -120,6 +111,9 @@ with st.sidebar:
     if st.button("⚙️ Custom Analysis"):
         st.session_state.current_page = "custom"
 
+    st.divider()
+    st.caption(f"Data last refreshed: {pd.Timestamp.now().strftime('%Y-%m-%d %H:%M')}")
+
 # Main content router
 if st.session_state.current_page == "home":
     home_page()
@@ -129,8 +123,3 @@ elif st.session_state.current_page == "ubar":
     ubar_page()
 elif st.session_state.current_page == "custom":
     custom_page()
-
-# Database status in sidebar
-with st.sidebar:
-    st.divider()
-    st.caption(f"Database last updated: {pd.Timestamp.now().strftime('%Y-%m-%d %H:%M')}")

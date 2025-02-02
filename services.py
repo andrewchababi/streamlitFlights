@@ -1,6 +1,7 @@
 import sqlite3
 import pandas as pd
 from datetime import datetime
+from script import process_flights_to_df, url
 
 querry = f"""
     SELECT * FROM flights_today
@@ -8,14 +9,21 @@ querry = f"""
 
 """
 
-def flight_gate_df(g1, g2): 
+# def flight_gate_df(g1, g2): 
+#     if g1 >= g2: 
+#         return "Please enter gate1 lower than gate 2."
+#     connection = sqlite3.connect('flights_today.db')
+#     df = pd.read_sql(querry, con=connection, params=(g1, g2))
+#     connection.close()
+    
+#     return df
+
+def flight_gate_df(g1, g2):
     if g1 >= g2: 
         return "Please enter gate1 lower than gate 2."
-    connection = sqlite3.connect('flights_today.db')
-    df = pd.read_sql(querry, con=connection, params=(g1, g2))
-    connection.close()
-    
-    return df
+    df = process_flights_to_df(url=url)
+    filtered_df = df[(df['gate'] >= g1) & (df['gate'] <= g2)]
+    return filtered_df
 
 
 def top_destination(df):
@@ -115,11 +123,3 @@ def analytics(df):
     
     return top_destinations, total_f, pre_close, close, rh
     
-    
-
-def main():
-    carlos_flights = flight_gate_df(62, 69)
-    print(carlos_flights)
-    print(analytics(carlos_flights))
-    
-main()
