@@ -23,11 +23,9 @@ def home_page():
     Use the sidebar to navigate between different analytical views.
     """)
 
-# Remove @st.cache_data from show_analytics
 def show_analytics(df):
     top_dest, total, pre_close, close, rh = analytics(df)
     
-    # Create layout inside the function
     st.metric("Total Flights", total)
     st.metric("Prep Closing", pre_close)
     st.metric("Final Closing", close)
@@ -43,7 +41,7 @@ def cp_page():
     data = flight_gate_df(62, 68)
     
     if isinstance(data, pd.DataFrame):
-        col1, col2 = st.columns([3, 2])  # Wider left column for data
+        col1, col2 = st.columns([3, 2])  
         with col1:
             st.subheader("Flight Data")
             st.dataframe(data.style.format({'gate': '{:.0f}'}), 
@@ -52,7 +50,8 @@ def cp_page():
                         hide_index=True)
         
         with col2:
-            show_analytics(data)  # Pass the data directly
+            show_analytics(data)  
+        st.image('international.webp')
     else:
         st.error(data)
 

@@ -1,22 +1,7 @@
-import sqlite3
 import pandas as pd
 from datetime import datetime
 from script import process_flights_to_df, url
 
-querry = f"""
-    SELECT * FROM flights_today
-    WHERE gate BETWEEN ? AND ?;
-
-"""
-
-# def flight_gate_df(g1, g2): 
-#     if g1 >= g2: 
-#         return "Please enter gate1 lower than gate 2."
-#     connection = sqlite3.connect('flights_today.db')
-#     df = pd.read_sql(querry, con=connection, params=(g1, g2))
-#     connection.close()
-    
-#     return df
 
 def flight_gate_df(g1, g2):
     if g1 >= g2: 
@@ -50,14 +35,11 @@ def prep_closing_time(df):
     return formatted_time_p, formatted_time_c
 
 def rush_hours(flights_df, time_col="time", window_minutes=60, top_n=3):
-     # Ensure the time column is a datetime type
     flights_df = flights_df.copy()
     flights_df[time_col] = pd.to_datetime(flights_df[time_col], errors='coerce')
     
-    # Bin the time into intervals (e.g., 30-minute windows)
     flights_df['time_window'] = flights_df[time_col].dt.floor(f"{window_minutes}min")
     
-    # Group by time window and count flights
     rush_hours = (
         flights_df.groupby('time_window')
         .size()
@@ -66,7 +48,6 @@ def rush_hours(flights_df, time_col="time", window_minutes=60, top_n=3):
         .head(top_n)
     )
     
-    # Format the time window as a string (HH:MM)
     rush_hours['time_window'] = rush_hours['time_window'].dt.strftime('%H:%M')
     
     return rush_hours.reset_index(drop=True)
