@@ -42,11 +42,11 @@ def show_analytics(df, col):
         
         # Top Destinations
         col.subheader("Top 3 Destinations")
-        col.dataframe(top_dest, use_container_width=True)
+        col.dataframe(top_dest, use_container_width=True, hide_index= True)
         
         # Rush Hours
         col.subheader("Peak Operational Hours")
-        col.bar_chart(rh.set_index('time_window'))
+        col.bar_chart(rh.set_index('time_window'), horizontal=True)
 
 def cp_page():
     st.title("Cost & Performance Analysis (Gates 62-69)")
@@ -58,7 +58,8 @@ def cp_page():
             st.subheader("Flight Data")
             st.dataframe(data.style.format({'gate': '{:.0f}'}), 
                         use_container_width=True,
-                        height=600)
+                        height=600,
+                        hide_index= True)
         
         with col2:
             show_analytics(data, col2)
@@ -75,7 +76,8 @@ def ubar_page():
             st.subheader("Flight Data")
             st.dataframe(data.style.format({'gate': '{:.0f}'}),
                         use_container_width=True,
-                        height=600)
+                        height=600,
+                        hide_index= True)
         
         with col2:
             show_analytics(data, col2)
@@ -99,7 +101,8 @@ def custom_page():
                 st.subheader("Flight Data")
                 st.dataframe(data.style.format({'gate': '{:.0f}'}),
                             use_container_width=True,
-                            height=600)
+                            height=600,
+                            hide_index= True)
             
             with right:
                 show_analytics(data, right)
