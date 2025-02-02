@@ -20,18 +20,6 @@ payload = {
     "cacheable": False
 }
 
-# SQL Query to create the flights_today table
-create_table_q = """
-CREATE TABLE IF NOT EXISTS flights_today (
-    AirlineName TEXT,
-    gate INTEGER,
-    time DATETIME,
-    updatedTime DATETIME,
-    AirportName TEXT,
-    status TEXT,
-    UniqueDisplayNo TEXT PRIMARY KEY
-);
-"""
 
 def fetch_flight_data(url):
     response = cloudscraper.create_scraper().post(url, json=payload)
@@ -54,7 +42,6 @@ def process_flights_to_df(url):
 
     raw_data = response.content
     structured_data = parse_json_content(raw_data)
-    formatted_data = format_json_data(structured_data)
 
     flights_df = convert_to_dataframe(structured_data)
 
@@ -74,12 +61,3 @@ def process_flights_to_df(url):
     new_df['gate'] = new_df['gate'].astype(int)
 
     return new_df
-
-
-
-def save_to_sql(df):
-    connection = sqlite3.connect('flights_today.db')
-    df.to_sql('flights_today', con=connection, if_exists='replace', index=False)
-    connection.close()
-    print("Data stored in SQLite database successfully.")
-
