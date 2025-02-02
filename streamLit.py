@@ -50,7 +50,9 @@ def cp_page():
                         hide_index=True)
         
         with col2:
+            st.metric('Sales Prediction for the day (BETA)', f"{9356} CAD")
             show_analytics(data)  
+            
         st.image('international.webp')
     else:
         st.error(data)
@@ -69,7 +71,10 @@ def ubar_page():
                         hide_index=True)
         
         with col2:
-            show_analytics(data)  # Pass the data directly
+            st.metric('Sales Prediction for the day (BETA)', f"{17295} CAD")
+            show_analytics(data)  
+            
+        st.image('international.webp')
     else:
         st.error(data)
 

@@ -54,7 +54,7 @@ def rush_hours(flights_df, time_col="time", window_minutes=60, top_n=3):
 
 def analytics(df):
     """
-    Compute key analytics for flight data, including top destinations, total flights, closing times, and rush hours.
+    Compute key analytics for flight data, including top destinations, total flights, closing times,  store sales and rush hours.
 
     Parameters:
         df (pd.DataFrame): Flight data containing at minimum the columns:
