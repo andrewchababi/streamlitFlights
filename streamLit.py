@@ -80,7 +80,7 @@ def custom_page():
         with col1:
             g1 = st.number_input("Starting Gate", min_value=1, max_value=100, value=62)
         with col2:
-            g2 = st.number_input("Ending Gate", min_value=1, max_value=100, value=69)
+            g2 = st.number_input("Ending Gate", min_value=1, max_value=100, value=68)
     
     if st.button("Analyze Custom Range"):
         data = flight_gate_df(g1, g2)
