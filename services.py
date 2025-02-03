@@ -52,6 +52,9 @@ def rush_hours(flights_df, time_col="time", window_minutes=60, top_n=3):
     
     return rush_hours.reset_index(drop=True)
 
+def flights_left(df):
+    return len(df[df['status'] == 'On time'])
+
 def analytics(df):
     """
     Compute key analytics for flight data, including top destinations, total flights, closing times,  store sales and rush hours.
@@ -101,6 +104,7 @@ def analytics(df):
     total_f = total_flights(df)
     pre_close, close = prep_closing_time(df)
     rh = rush_hours(df)
+    fl = flights_left(df)
     
-    return top_destinations, total_f, pre_close, close, rh
+    return fl, top_destinations, total_f, pre_close, close, rh
     

@@ -24,17 +24,20 @@ def home_page():
     """)
 
 def show_analytics(df):
-    top_dest, total, pre_close, close, rh = analytics(df)
+    fl, top_dest, total, pre_close, close, rh = analytics(df)
     
     st.metric("Total Flights", total)
-    st.metric("Prep Closing", pre_close)
-    st.metric("Final Closing", close)
+    st.metric("Flights Left", fl)
+    
+    st.subheader("Peak Operational Hours")
+    st.bar_chart(rh.set_index('time_window'), horizontal=True)
     
     st.subheader("Top 3 Destinations")
     st.dataframe(top_dest, use_container_width=True, hide_index=True)
     
-    st.subheader("Peak Operational Hours")
-    st.bar_chart(rh.set_index('time_window'), horizontal=True)
+    st.metric("Prep Closing", pre_close)
+    st.metric("Final Closing", close)
+    
 
 def cp_page():
     st.title("Carlos and Pepes Flights (62-68)")
@@ -48,12 +51,8 @@ def cp_page():
                         use_container_width=True,
                         height=600,
                         hide_index=True)
-        
         with col2:
-            st.metric('Sales Prediction for the day (BETA)', f"{9356} CAD")
-            show_analytics(data)  
-            
-        st.image('international.webp')
+            show_analytics(data)     
     else:
         st.error(data)
 
@@ -69,12 +68,8 @@ def ubar_page():
                         use_container_width=True,
                         height=600,
                         hide_index=True)
-        
         with col2:
-            st.metric('Sales Prediction for the day (BETA)', f"{17295} CAD")
             show_analytics(data)  
-            
-        st.image('international.webp')
     else:
         st.error(data)
 
