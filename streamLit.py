@@ -111,7 +111,7 @@ with st.sidebar:
         st.session_state.current_page = "custom"
 
     st.divider()
-    st.caption(f"Data last refreshed: {pd.Timestamp.now().strftime('%Y-%m-%d %H:%M')}")
+    st.caption(f"Data last refreshed: {pd.Timestamp.now(tz='US/Eastern').strftime('%Y-%m-%d %H:%M')}")
 
 # Main content router
 if st.session_state.current_page == "home":
