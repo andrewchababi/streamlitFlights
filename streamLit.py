@@ -24,10 +24,11 @@ def home_page():
     """)
 
 def show_analytics(df):
-    fl, top_dest, total, pre_close, close, rh = analytics(df)
+    fl, delayed_flights, top_dest, total, pre_close, close, rh = analytics(df)
     
     st.metric("Total Flights", total)
     st.metric("Flights Left", fl)
+    st.metric("Delayed flights", delayed_flights)
     
     st.subheader("Peak Operational Hours")
     st.bar_chart(rh.set_index('time_window'), horizontal=True)
@@ -107,8 +108,6 @@ with st.sidebar:
         st.session_state.current_page = "cp"
     if st.button("🍷 UBar Analysis"):
         st.session_state.current_page = "ubar"
-    if st.button("⚙️ Custom Analysis"):
-        st.session_state.current_page = "custom"
 
     st.divider()
     st.caption(f"Data last refreshed: {pd.Timestamp.now(tz='US/Eastern').strftime('%Y-%m-%d %H:%M')}")
@@ -120,5 +119,3 @@ elif st.session_state.current_page == "cp":
     cp_page()
 elif st.session_state.current_page == "ubar":
     ubar_page()
-elif st.session_state.current_page == "custom":
-    custom_page()
