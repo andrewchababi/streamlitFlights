@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from services import flight_gate_df, analytics
+from services import flight_gate_df, analytics, plot_flights_by_hour
 
 st.set_page_config(layout="wide")
 
@@ -43,6 +43,7 @@ def show_analytics(df):
 def cp_page():
     st.title("Carlos and Pepes Flights (62-68)")
     data = flight_gate_df(62, 68)
+    fig, ax = plot_flights_by_hour(data)
     
     if isinstance(data, pd.DataFrame):
         col1, col2 = st.columns([3, 2])  
@@ -52,6 +53,8 @@ def cp_page():
                         use_container_width=True,
                         height=600,
                         hide_index=True)
+            
+            st.pyplot(fig)
         with col2:
             show_analytics(data)     
     else:

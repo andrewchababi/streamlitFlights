@@ -1,7 +1,8 @@
 import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 from datetime import datetime
 from script import process_flights_to_df, url
-
 
 def flight_gate_df(g1, g2):
     if g1 >= g2: 
@@ -56,8 +57,45 @@ def rush_hours(flights_df, time_col="time", window_minutes=60, top_n=3):
     
     return rush_hours.reset_index(drop=True)
 
+
+def plot_flights_by_hour(df, time_col="time"):
+    # Ensure pyplot import is correct first
+    df[time_col] = pd.to_datetime(df[time_col], errors='coerce')
+    df['rounded_time'] = df[time_col].dt.round("h")
+    df['rounded_hour'] = df['rounded_time'].dt.hour
+    
+    flight_counts = df.groupby('rounded_hour').size().reindex(range(24), fill_value=0)
+    
+    # Set style using proper reference
+    sns.set_theme(
+        style='ticks',
+        context="talk",
+        palette="viridis",
+        font="Arial"
+    )
+    
+    fig, ax = plt.subplots(figsize=(12, 6))
+    ax.plot(flight_counts.index, flight_counts.values,
+            marker='o', linestyle='-', linewidth=2, markersize=8, color='royalblue')
+    
+    # Customize labels and title with improved font sizes and weights
+    ax.set_xlabel("Hour of Day", fontsize=12)
+    ax.set_ylabel("Number of Flights", fontsize=12)
+    ax.set_title("Number of Flights by Hour", fontsize=14, fontweight='bold')
+    ax.set_xticks(range(24))
+    ax.set_xticklabels(range(24), fontsize=10)
+    
+    # Annotate each data point with the count
+    # for x, y in zip(flight_counts.index, flight_counts.values):
+    #     ax.text(x, y + 0.2, str(y), ha='center', va='bottom', fontsize=10)
+    
+    plt.tight_layout()
+    return fig, ax
+
+
 def flights_left(df):
     return len(df[df['status'] == 'On time'])
+
 
 def analytics(df):
     """
