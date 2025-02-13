@@ -22,6 +22,9 @@ def top_destination(df):
 def total_flights(df):
     return len(df)
 
+def flights_left(df):
+    return len(df[df['status'] == 'On time'])
+
 def total_delayed_flights(df):
     return len(df[df['status'] == 'Delayed'])
 
@@ -75,27 +78,24 @@ def plot_flights_by_hour(df, time_col="time"):
     )
     
     fig, ax = plt.subplots(figsize=(12, 6))
-    ax.plot(flight_counts.index, flight_counts.values,
-            marker='o', linestyle='-', linewidth=2, markersize=8, color='royalblue')
+    ax.bar(flight_counts.index, flight_counts.values, color='royalblue', alpha=0.7)
     
     # Customize labels and title with improved font sizes and weights
     ax.set_xlabel("Hour of Day", fontsize=12)
     ax.set_ylabel("Number of Flights", fontsize=12)
-    ax.set_title("Number of Flights by Hour", fontsize=14, fontweight='bold')
-    ax.set_xticks(range(24))
-    ax.set_xticklabels(range(24), fontsize=10)
-    
-    # Annotate each data point with the count
-    # for x, y in zip(flight_counts.index, flight_counts.values):
-    #     ax.text(x, y + 0.2, str(y), ha='center', va='bottom', fontsize=10)
+    #ax.set_title("Number of Flights by Hour", fontsize=14, fontweight='bold')
+    ax.set_xlim(3,23)
+    ax.set_xticks(range(3, 23))
+    ax.set_xticklabels(range(3, 23), fontsize=10)
     
     plt.tight_layout()
     return fig, ax
 
-
-def flights_left(df):
-    return len(df[df['status'] == 'On time'])
-
+def highlight_delayed(row):
+    """Style function for pandas Styler"""
+    if row['status'] == 'Delayed':
+        return ['background-color: #800020'] * len(row)  # Light red
+    return [''] * len(row)
 
 def analytics(df):
     """

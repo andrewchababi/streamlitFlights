@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from services import flight_gate_df, analytics, plot_flights_by_hour
+from services import flight_gate_df, analytics, plot_flights_by_hour, highlight_delayed
 
 st.set_page_config(layout="wide")
 
@@ -43,17 +43,19 @@ def show_analytics(df):
 def cp_page():
     st.title("Carlos and Pepes Flights (62-68)")
     data = flight_gate_df(62, 68)
-    fig, ax = plot_flights_by_hour(data)
+    plot_df = data.copy()
+    fig, ax = plot_flights_by_hour(plot_df)
     
     if isinstance(data, pd.DataFrame):
         col1, col2 = st.columns([3, 2])  
         with col1:
             st.subheader("Flight Data")
-            st.dataframe(data.style.format({'gate': '{:.0f}'}), 
+            st.dataframe(data.style.format({'gate': '{:.0f}'})
+                         .apply(highlight_delayed, axis=1), 
                         use_container_width=True,
                         height=600,
                         hide_index=True)
-            
+            st.subheader("Flights per Hour")
             st.pyplot(fig)
         with col2:
             show_analytics(data)     
@@ -63,19 +65,26 @@ def cp_page():
 def ubar_page():
     st.title("Ubar Flights (52-68)")
     data = flight_gate_df(52, 68)
+    plot_df = data.copy()
+    fig, ax = plot_flights_by_hour(plot_df)
     
     if isinstance(data, pd.DataFrame):
         col1, col2 = st.columns([3, 2])
         with col1:
             st.subheader("Flight Data")
-            st.dataframe(data.style.format({'gate': '{:.0f}'}),
+            st.dataframe(data.style.format({'gate': '{:.0f}'})
+                         .apply(highlight_delayed, axis=1),
                         use_container_width=True,
                         height=600,
                         hide_index=True)
+            
+            st.subheader("Flights per Hour")
+            st.pyplot(fig)
         with col2:
             show_analytics(data)  
     else:
         st.error(data)
+
 
 def custom_page():
     st.title("Custom Gate Flights Analysis")
