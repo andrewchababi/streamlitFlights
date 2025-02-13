@@ -83,7 +83,6 @@ def plot_flights_by_hour(df, time_col="time"):
     # Customize labels and title with improved font sizes and weights
     ax.set_xlabel("Hour of Day", fontsize=12)
     ax.set_ylabel("Number of Flights", fontsize=12)
-    #ax.set_title("Number of Flights by Hour", fontsize=14, fontweight='bold')
     ax.set_xlim(3,23)
     ax.set_xticks(range(3, 23))
     ax.set_xticklabels(range(3, 23), fontsize=10)
