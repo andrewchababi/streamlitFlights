@@ -1,7 +1,8 @@
 import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 from datetime import datetime
 from script import process_flights_to_df, url
-
 
 def flight_gate_df(g1, g2):
     if g1 >= g2: 
@@ -20,6 +21,13 @@ def top_destination(df):
 
 def total_flights(df):
     return len(df)
+
+def flights_left(df):
+    return len(df[df['status'] == 'On time'])
+
+def total_delayed_flights(df):
+    return len(df[df['status'] == 'Delayed'])
+
 
 
 def prep_closing_time(df):
@@ -52,8 +60,41 @@ def rush_hours(flights_df, time_col="time", window_minutes=60, top_n=3):
     
     return rush_hours.reset_index(drop=True)
 
-def flights_left(df):
-    return len(df[df['status'] == 'On time'])
+
+def plot_flights_by_hour(df, time_col="time"):
+    # Ensure pyplot import is correct first
+    df[time_col] = pd.to_datetime(df[time_col], errors='coerce')
+    df['rounded_time'] = df[time_col].dt.round("h")
+    df['rounded_hour'] = df['rounded_time'].dt.hour
+    
+    flight_counts = df.groupby('rounded_hour').size().reindex(range(24), fill_value=0)
+    
+    # Set style using proper reference
+    sns.set_theme(
+        style='ticks',
+        context="talk",
+        palette="viridis",
+        font="Arial"
+    )
+    
+    fig, ax = plt.subplots(figsize=(12, 6))
+    ax.bar(flight_counts.index, flight_counts.values, color='royalblue', alpha=0.7)
+    
+    # Customize labels and title with improved font sizes and weights
+    ax.set_xlabel("Hour of Day", fontsize=12)
+    ax.set_ylabel("Number of Flights", fontsize=12)
+    ax.set_xlim(3,23)
+    ax.set_xticks(range(3, 23))
+    ax.set_xticklabels(range(3, 23), fontsize=10)
+    
+    plt.tight_layout()
+    return fig, ax
+
+def highlight_delayed(row):
+    """Style function for pandas Styler"""
+    if row['status'] == 'Delayed':
+        return ['background-color: #800020'] * len(row)  # Light red
+    return [''] * len(row)
 
 def analytics(df):
     """
@@ -105,6 +146,7 @@ def analytics(df):
     pre_close, close = prep_closing_time(df)
     rh = rush_hours(df)
     fl = flights_left(df)
+    delayed_flights = total_delayed_flights(df)
     
-    return fl, top_destinations, total_f, pre_close, close, rh
+    return fl, delayed_flights, top_destinations, total_f, pre_close, close, rh
     
