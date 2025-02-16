@@ -92,7 +92,7 @@ def plot_flights_by_hour(df, time_col="time"):
 
 def highlight_delayed(row):
     """Style function for pandas Styler"""
-    if row['status'] == 'Delayed':
+    if row['status'] == 'Delayed' or row['status'] == 'Cancelled':
         return ['background-color: #800020'] * len(row)  # Light red
     return [''] * len(row)
 
