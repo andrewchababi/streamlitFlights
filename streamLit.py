@@ -30,8 +30,8 @@ def show_analytics(df):
     st.metric("Flights Left", fl)
     st.metric("Delayed flights", delayed_flights)
     
-    st.subheader("Peak Operational Hours")
-    st.bar_chart(rh.set_index('time_window'), horizontal=True)
+    # st.subheader("Peak Operational Hours")
+    # st.bar_chart(rh.set_index('time_window'), horizontal=True)
     
     st.subheader("Top 3 Destinations")
     st.dataframe(top_dest, use_container_width=True, hide_index=True)
