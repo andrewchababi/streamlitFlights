@@ -11,6 +11,15 @@ def flight_gate_df(g1, g2):
     filtered_df = df[(df['Gate'] >= g1) & (df['Gate'] <= g2)].reset_index(drop=True)
     return filtered_df
 
+def add_footprint(df):
+    df["Passengers Amount"] = 0
+    df["Passengers Amount"] = df["Flight number"].apply(assess_passengers)
+    return df
+
+def assess_passengers(unique_display_number): 
+    if str(unique_display_number)[:5] == 'TS284':
+        return 20
+    return 0
 
 def top_destination(df):
     destination_count = df['AirportName'].value_counts().reset_index()

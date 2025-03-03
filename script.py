@@ -1,7 +1,6 @@
 import json
 import pandas as pd
 import cloudscraper
-import sqlite3
 import streamlit as st
 
 # Define the URL and payload for fetching flight data

@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from services import flight_gate_df, analytics, plot_flights_by_hour, highlight_delayed
+from services import flight_gate_df, analytics, plot_flights_by_hour, highlight_delayed, add_footprint
 
 st.set_page_config(layout="wide")
 
@@ -43,6 +43,7 @@ def show_analytics(df):
 def cp_page():
     st.title("Carlos and Pepes Flights (62-68)")
     data = flight_gate_df(62, 68)
+    data = add_footprint(data)
     
     hide_departed = st.checkbox("Hide Departed Flights", value=False)
 
