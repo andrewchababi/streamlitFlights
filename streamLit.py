@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from services import flight_gate_df, analytics, plot_flights_by_hour, highlight_delayed
+from services import flight_gate_df, analytics, plot_flights_by_hour, highlight_delayed, add_footprint, plot_flights_by_hour, plot_passengers_by_hour
 
 st.set_page_config(layout="wide")
 
@@ -43,26 +43,32 @@ def show_analytics(df):
 def cp_page():
     st.title("Carlos and Pepes Flights (62-68)")
     data = flight_gate_df(62, 68)
+    data = add_footprint(data)
     
     hide_departed = st.checkbox("Hide Departed Flights", value=False)
 
     if hide_departed:
-        data = data[data["status"] != "Departed"]  # Filter out "Departed" rows
+        data = data[data["Status"] != "Departed"]  # Filter out "Departed" rows
     
     plot_df = data.copy()
-    fig, ax = plot_flights_by_hour(plot_df)
+    flights_fig, flights_ax = plot_flights_by_hour(plot_df)
+    passengers_fig, passengers_ax = plot_passengers_by_hour(plot_df)
     
     if isinstance(data, pd.DataFrame):
         col1, col2 = st.columns([3, 2])  
         with col1:
             st.subheader("Flight Data")
-            st.dataframe(data.style.format({'gate': '{:.0f}'})
+            st.dataframe(data.style.format({'Gate': '{:.0f}'})
                          .apply(highlight_delayed, axis=1), 
                         use_container_width=True,
                         height=600)
         
             st.subheader("Flights per Hour")
-            st.pyplot(fig)
+            st.pyplot(flights_fig)
+            
+            st.subheader("Passengers per Hour")
+            st.pyplot(passengers_fig)
+
         with col2:
             show_analytics(data)     
     else:
@@ -78,7 +84,7 @@ def ubar_page():
         col1, col2 = st.columns([3, 2])
         with col1:
             st.subheader("Flight Data")
-            st.dataframe(data.style.format({'gate': '{:.0f}'})
+            st.dataframe(data.style.format({'Gate': '{:.0f}'})
                          .apply(highlight_delayed, axis=1),
                         use_container_width=True,
                         height=600,
@@ -107,7 +113,7 @@ def custom_page():
             left, right = st.columns([3, 2])
             with left:
                 st.subheader("Flight Data")
-                st.dataframe(data.style.format({'gate': '{:.0f}'}),
+                st.dataframe(data.style.format({'Gate': '{:.0f}'}),
                             use_container_width=True,
                             height=600,
                             hide_index=True)
