@@ -8,7 +8,7 @@ def flight_gate_df(g1, g2):
     if g1 >= g2: 
         return "Please enter gate1 lower than gate 2."
     df = process_flights_to_df(url=url)
-    filtered_df = df[(df['gate'] >= g1) & (df['gate'] <= g2)]
+    filtered_df = df[(df['gate'] >= g1) & (df['gate'] <= g2)].reset_index(drop=True)
     return filtered_df
 
 

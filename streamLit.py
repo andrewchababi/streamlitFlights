@@ -53,8 +53,7 @@ def cp_page():
             st.dataframe(data.style.format({'gate': '{:.0f}'})
                          .apply(highlight_delayed, axis=1), 
                         use_container_width=True,
-                        height=600,
-                        hide_index=True)
+                        height=600)
             st.subheader("Flights per Hour")
             st.pyplot(fig)
         with col2:
