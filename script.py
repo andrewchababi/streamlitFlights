@@ -4,7 +4,6 @@ import cloudscraper
 import sqlite3
 import streamlit as st
 
-
 # Define the URL and payload for fetching flight data
 url = "https://www.admtl.com/en-CA/webruntime/api/apex/execute?language=en-CA&asGuest=true&htmlEncode=false"
 
@@ -46,18 +45,19 @@ def process_flights_to_df(url):
     flights_df = convert_to_dataframe(structured_data)
 
     flights_df.rename(columns={
-        'TerminalGate': 'gate',
+        'TerminalGate': 'Gate',
         'FormattedScheduledTime': 'time',
         'FormattedUpdatedTime': 'updatedTime',
-        'OperationalStatusDescription': 'status'
+        'OperationalStatusDescription': 'Status',
+        'PublicDisplayFlightNumber' : 'Flight number',
     }, inplace=True)
 
-    new_columns_of_interest = ['AirlineName', 'gate', 'time', 'updatedTime', 'AirportName', 'status', 'UniqueDisplayNo']
+    new_columns_of_interest = ['AirlineName', 'Gate', 'time', 'updatedTime', 'AirportName', 'Status', 'Flight number']
     new_df = flights_df[new_columns_of_interest]
 
     new_df = new_df.copy()
-    new_df['gate'] = new_df['gate'].str.extract('(\d+)')  # Extract digits
+    new_df['Gate'] = new_df['Gate'].str.extract('(\d+)')  # Extract digits
     new_df = new_df.dropna()
-    new_df['gate'] = new_df['gate'].astype(int)
+    new_df['Gate'] = new_df['Gate'].astype(int)
 
     return new_df

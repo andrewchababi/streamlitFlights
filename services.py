@@ -8,7 +8,7 @@ def flight_gate_df(g1, g2):
     if g1 >= g2: 
         return "Please enter gate1 lower than gate 2."
     df = process_flights_to_df(url=url)
-    filtered_df = df[(df['gate'] >= g1) & (df['gate'] <= g2)].reset_index(drop=True)
+    filtered_df = df[(df['Gate'] >= g1) & (df['Gate'] <= g2)].reset_index(drop=True)
     return filtered_df
 
 
@@ -23,10 +23,10 @@ def total_flights(df):
     return len(df)
 
 def flights_left(df):
-    return len(df[df['status'] == 'On time'])
+    return len(df[df['Status'] == 'On time'])
 
 def total_delayed_flights(df):
-    return len(df[df['status'] == 'Delayed'])
+    return len(df[df['Status'] == 'Delayed'])
 
 
 
@@ -102,7 +102,7 @@ def plot_flights_by_hour(df, time_col="time"):
 
 def highlight_delayed(row):
     """Style function for pandas Styler"""
-    if row['status'] == 'Delayed' or row['status'] == 'Cancelled':
+    if row['Status'] == 'Delayed' or row['Status'] == 'Cancelled':
         return ['background-color: #800020'] * len(row)  # Light red
     return [''] * len(row)
 

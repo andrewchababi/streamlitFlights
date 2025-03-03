@@ -47,7 +47,7 @@ def cp_page():
     hide_departed = st.checkbox("Hide Departed Flights", value=False)
 
     if hide_departed:
-        data = data[data["status"] != "Departed"]  # Filter out "Departed" rows
+        data = data[data["Status"] != "Departed"]  # Filter out "Departed" rows
     
     plot_df = data.copy()
     fig, ax = plot_flights_by_hour(plot_df)
@@ -56,7 +56,7 @@ def cp_page():
         col1, col2 = st.columns([3, 2])  
         with col1:
             st.subheader("Flight Data")
-            st.dataframe(data.style.format({'gate': '{:.0f}'})
+            st.dataframe(data.style.format({'Gate': '{:.0f}'})
                          .apply(highlight_delayed, axis=1), 
                         use_container_width=True,
                         height=600)
@@ -78,7 +78,7 @@ def ubar_page():
         col1, col2 = st.columns([3, 2])
         with col1:
             st.subheader("Flight Data")
-            st.dataframe(data.style.format({'gate': '{:.0f}'})
+            st.dataframe(data.style.format({'Gate': '{:.0f}'})
                          .apply(highlight_delayed, axis=1),
                         use_container_width=True,
                         height=600,
@@ -107,7 +107,7 @@ def custom_page():
             left, right = st.columns([3, 2])
             with left:
                 st.subheader("Flight Data")
-                st.dataframe(data.style.format({'gate': '{:.0f}'}),
+                st.dataframe(data.style.format({'Gate': '{:.0f}'}),
                             use_container_width=True,
                             height=600,
                             hide_index=True)
