@@ -4,22 +4,7 @@ import seaborn as sns
 from datetime import datetime
 from script import process_flights_to_df, url
 
-def flight_gate_df(g1, g2):
-    if g1 >= g2: 
-        return "Please enter gate1 lower than gate 2."
-    df = process_flights_to_df(url=url)
-    filtered_df = df[(df['Gate'] >= g1) & (df['Gate'] <= g2)].reset_index(drop=True)
-    return filtered_df
-
-def add_footprint(df):
-    df["Passengers"] = 0
-    df["Passengers"] = df["Flight number"].apply(assess_passengers)
-    return df
-
-def assess_passengers(unique_display_number): 
-
-    # Dictionary mapping flight numbers to estimated passengers
-    flight_mappings = {
+flight_mappings = {
     "TS284": 169, "WG6146": 157, "TS890": 304, "F82100": 157, "WG378": 157,
     "TS398": 304, "TS538": 169, "WG7188": 157, "CM484": 114, "WG4126": 157,
     "AC944": 262, "AC1748": 144, "TS198": 169, "TS760": 169, "AC938": 262,
@@ -33,9 +18,23 @@ def assess_passengers(unique_display_number):
     "LH475": 261, "TS680": 169, "AC822": 259, "AC878": 262, "AC894": 144,
     "AT209": 233, "BA94": 262, "QR764": 319, "AF4083": 123, "AC870": 319,
     "S4328": 157, "AC876": 262, "TP254": 169, "AV201": 123, "RJ272": 233
-    }
-    
-    return flight_mappings.get(unique_display_number, 0)  # Returns 0 if flight number is unknown
+}
+
+
+def flight_gate_df(g1, g2):
+    if g1 >= g2: 
+        return "Please enter gate1 lower than gate 2."
+    df = process_flights_to_df(url=url)
+    filtered_df = df[(df['Gate'] >= g1) & (df['Gate'] <= g2)].reset_index(drop=True)
+    return filtered_df
+
+def add_footprint(df):
+    df["Passengers"] = 0
+    df["Passengers"] = df["Flight number"].apply(assess_passengers)
+    return df
+
+def assess_passengers(unique_display_number): 
+    return flight_mappings.get(unique_display_number, 188)  
 
 
 def top_destination(df):
