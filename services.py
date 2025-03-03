@@ -12,14 +12,31 @@ def flight_gate_df(g1, g2):
     return filtered_df
 
 def add_footprint(df):
-    df["Passengers Amount"] = 0
-    df["Passengers Amount"] = df["Flight number"].apply(assess_passengers)
+    df["Passengers"] = 0
+    df["Passengers"] = df["Flight number"].apply(assess_passengers)
     return df
 
 def assess_passengers(unique_display_number): 
-    if str(unique_display_number)[:5] == 'TS284':
-        return 20
-    return 0
+
+    # Dictionary mapping flight numbers to estimated passengers
+    flight_mappings = {
+    "TS284": 169, "WG6146": 157, "TS890": 304, "F82100": 157, "WG378": 157,
+    "TS398": 304, "TS538": 169, "WG7188": 157, "CM484": 114, "WG4126": 157,
+    "AC944": 262, "AC1748": 144, "TS198": 169, "TS760": 169, "AC938": 262,
+    "AC954": 144, "EK244": 319, "AC962": 144, "AC948": 144, "AC1838": 144,
+    "WG5163": 157, "WG4134": 157, "WG7134": 157, "WG2189": 157, "AM681": 131,
+    "AC999": 144, "TS106": 320, "AC1004": 144, "TS938": 320, "TS498": 169,
+    "TS974": 320, "TS814": 169, "AC1884": 144, "LX87": 266, "AF345": 263,
+    "AC959": 144, "WG517": 157, "WG3106": 157, "AC844": 259, "AC874": 319,
+    "AC1792": 169, "OS74": 169, "AC995": 144, "AC832": 259, "TS196": 169,
+    "AC1275": 144, "AF347": 263, "KL672": 262, "AC866": 319, "TS110": 320,
+    "LH475": 261, "TS680": 169, "AC822": 259, "AC878": 262, "AC894": 144,
+    "AT209": 233, "BA94": 262, "QR764": 319, "AF4083": 123, "AC870": 319,
+    "S4328": 157, "AC876": 262, "TP254": 169, "AV201": 123, "RJ272": 233
+    }
+    
+    return flight_mappings.get(unique_display_number, 0)  # Returns 0 if flight number is unknown
+
 
 def top_destination(df):
     destination_count = df['AirportName'].value_counts().reset_index()
@@ -108,6 +125,39 @@ def plot_flights_by_hour(df, time_col="time"):
     
     plt.tight_layout()
     return fig, ax
+
+def plot_passengers_by_hour(df, time_col="time", passenger_col="Passengers"):
+    
+    # Convert time column to datetime
+    df[time_col] = pd.to_datetime(df[time_col], errors='coerce')
+    df['rounded_time'] = df[time_col].dt.round("h")
+    df['rounded_hour'] = df['rounded_time'].dt.hour
+    
+    # Aggregate passengers per hour
+    passenger_counts = df.groupby('rounded_hour')[passenger_col].sum().reindex(range(24), fill_value=0)
+    
+    # Set style using seaborn
+    sns.set_theme(
+        style='ticks',
+        context="talk",
+        palette="viridis",
+        font="Arial"
+    )
+    
+    # Create figure
+    fig, ax = plt.subplots(figsize=(12, 6))
+    ax.bar(passenger_counts.index, passenger_counts.values, color='royalblue', alpha=0.7)
+    
+    # Customize labels and title
+    ax.set_xlabel("Hour of Day", fontsize=12)
+    ax.set_ylabel("Passengers", fontsize=12)
+    ax.set_xlim(3,23)
+    ax.set_xticks(range(3, 23))
+    ax.set_xticklabels(range(3, 23), fontsize=10)
+    
+    plt.tight_layout()
+    return fig, ax
+
 
 def highlight_delayed(row):
     """Style function for pandas Styler"""

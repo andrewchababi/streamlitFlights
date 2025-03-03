@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from services import flight_gate_df, analytics, plot_flights_by_hour, highlight_delayed, add_footprint
+from services import flight_gate_df, analytics, plot_flights_by_hour, highlight_delayed, add_footprint, plot_flights_by_hour, plot_passengers_by_hour
 
 st.set_page_config(layout="wide")
 
@@ -51,7 +51,8 @@ def cp_page():
         data = data[data["Status"] != "Departed"]  # Filter out "Departed" rows
     
     plot_df = data.copy()
-    fig, ax = plot_flights_by_hour(plot_df)
+    flights_fig, flights_ax = plot_flights_by_hour(plot_df)
+    passengers_fig, passengers_ax = plot_passengers_by_hour(plot_df)
     
     if isinstance(data, pd.DataFrame):
         col1, col2 = st.columns([3, 2])  
@@ -63,7 +64,11 @@ def cp_page():
                         height=600)
         
             st.subheader("Flights per Hour")
-            st.pyplot(fig)
+            st.pyplot(flights_fig)
+            
+            st.subheader("Passengers per Hour")
+            st.pyplot(passengers_fig)
+
         with col2:
             show_analytics(data)     
     else:
