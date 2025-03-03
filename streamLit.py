@@ -30,8 +30,8 @@ def show_analytics(df):
     st.metric("Flights Left", fl)
     st.metric("Delayed flights", delayed_flights)
     
-    st.subheader("Peak Operational Hours")
-    st.bar_chart(rh.set_index('time_window'), horizontal=True)
+    # st.subheader("Peak Operational Hours")
+    # st.bar_chart(rh.set_index('time_window'), horizontal=True)
     
     st.subheader("Top 3 Destinations")
     st.dataframe(top_dest, use_container_width=True, hide_index=True)
@@ -43,6 +43,12 @@ def show_analytics(df):
 def cp_page():
     st.title("Carlos and Pepes Flights (62-68)")
     data = flight_gate_df(62, 68)
+    
+    hide_departed = st.checkbox("Hide Departed Flights", value=False)
+
+    if hide_departed:
+        data = data[data["status"] != "Departed"]  # Filter out "Departed" rows
+    
     plot_df = data.copy()
     fig, ax = plot_flights_by_hour(plot_df)
     
@@ -53,8 +59,8 @@ def cp_page():
             st.dataframe(data.style.format({'gate': '{:.0f}'})
                          .apply(highlight_delayed, axis=1), 
                         use_container_width=True,
-                        height=600,
-                        hide_index=True)
+                        height=600)
+        
             st.subheader("Flights per Hour")
             st.pyplot(fig)
         with col2:

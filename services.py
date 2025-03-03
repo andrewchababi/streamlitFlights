@@ -8,7 +8,7 @@ def flight_gate_df(g1, g2):
     if g1 >= g2: 
         return "Please enter gate1 lower than gate 2."
     df = process_flights_to_df(url=url)
-    filtered_df = df[(df['gate'] >= g1) & (df['gate'] <= g2)]
+    filtered_df = df[(df['gate'] >= g1) & (df['gate'] <= g2)].reset_index(drop=True)
     return filtered_df
 
 
@@ -30,13 +30,23 @@ def total_delayed_flights(df):
 
 
 
+from datetime import datetime
+import pandas as pd
+
 def prep_closing_time(df):
+    # Get the last flight row and convert its 'time' column to datetime.
     last_flight = df.tail(1).copy()
-    last_flight['time'] = pd.to_datetime(last_flight['time'], errors='coerce')
-    last_hour = last_flight['time'].dt.hour.values[0]
+    last_flight['time'] = pd.to_datetime(last_flight['time'], errors='coerce').dt.round('h')
     
+    # Get the actual timestamp from the last row.
+    last_time = last_flight['time'].iloc[0]
+    
+    # # The closing time is now the ceiled hour.
+    last_hour = last_time.hour
+    # The prep closing time is 2 hours earlier.
     prep_close_hour = last_hour - 2
     
+    # Format the hours into a string (e.g., "07:00 PM").
     formatted_time_p = datetime.strptime(str(prep_close_hour), "%H").strftime("%I:%M %p")
     formatted_time_c = datetime.strptime(str(last_hour), "%H").strftime("%I:%M %p")
     
