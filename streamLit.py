@@ -77,8 +77,16 @@ def cp_page():
 def ubar_page():
     st.title("Ubar Flights (52-68)")
     data = flight_gate_df(52, 68)
+    data = add_footprint(data)
+    
+    hide_departed = st.checkbox("Hide Departed Flights", value=False)
+
+    if hide_departed:
+        data = data[data["Status"] != "Departed"]  # Filter out "Departed" rows
+    
     plot_df = data.copy()
     fig, ax = plot_flights_by_hour(plot_df)
+    passengers_fig, passengers_ax = plot_passengers_by_hour(plot_df)
     
     if isinstance(data, pd.DataFrame):
         col1, col2 = st.columns([3, 2])
@@ -87,11 +95,12 @@ def ubar_page():
             st.dataframe(data.style.format({'Gate': '{:.0f}'})
                          .apply(highlight_delayed, axis=1),
                         use_container_width=True,
-                        height=600,
-                        hide_index=True)
+                        height=600)
             
             st.subheader("Flights per Hour")
             st.pyplot(fig)
+            st.subheader("Passengers per Hour")
+            st.pyplot(passengers_fig)
         with col2:
             show_analytics(data)  
     else:
