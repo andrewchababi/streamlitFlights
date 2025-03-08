@@ -12,7 +12,7 @@ if 'current_page' not in st.session_state:
 def home_page():
     st.title("Airport Flight Analytics Dashboard ✈️")
     st.write("""
-    Welcome to the Montreal Airport Flight Analytics Dashboard!
+    to the Montreal Airport Flight Analytics Dashboard!
     
     **Features:**
     - Real-time flight data analysis
