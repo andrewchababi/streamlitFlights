@@ -55,6 +55,10 @@ def cp_page():
     passengers_fig, passengers_ax = plot_passengers_by_hour(plot_df)
     
     if isinstance(data, pd.DataFrame):
+
+        data = data.reset_index(drop=True)  # Reset index to remove default numbering
+        data.index = data.index + 1  # Start index from 1 instead of 0
+
         col1, col2 = st.columns([3, 2])  
         with col1:
             st.subheader("Flight Data")
@@ -89,6 +93,10 @@ def ubar_page():
     passengers_fig, passengers_ax = plot_passengers_by_hour(plot_df)
     
     if isinstance(data, pd.DataFrame):
+
+        data = data.reset_index(drop=True)  # Reset index to remove default numbering
+        data.index = data.index + 1  # Start index from 1 instead of 0
+
         col1, col2 = st.columns([3, 2])
         with col1:
             st.subheader("Flight Data")
