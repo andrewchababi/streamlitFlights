@@ -1,6 +1,8 @@
 import streamlit as st
 import pandas as pd
-from services import flight_gate_df, analytics, plot_flights_by_hour, highlight_delayed, add_footprint, plot_flights_by_hour, plot_passengers_by_hour
+from services.analytics_services import  analytics, plot_flights_by_hour
+from services.df_service import flight_gate_df, add_footprint, highlight_delayed
+from services.chartPlot_service import plot_flights_by_hour, plot_passengers_by_hour
 
 st.set_page_config(layout="wide")
 
@@ -24,7 +26,7 @@ def home_page():
     """)
 
 def show_analytics(df):
-    fl, delayed_flights, top_dest, total, pre_close, close, rh = analytics(df)
+    fl, delayed_flights, top_dest, total, pre_close, close = analytics(df)
     
     st.metric("Total Flights", total)
     st.metric("Flights Left", fl)
