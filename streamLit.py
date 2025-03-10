@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from services.analytics_services import  analytics, plot_flights_by_hour
+from services.analytics_services import  analytics
 from services.df_service import flight_gate_df, add_footprint, highlight_delayed
 from services.chartPlot_service import plot_flights_by_hour, plot_passengers_by_hour
 
