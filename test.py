@@ -2,33 +2,36 @@ import streamlit as st
 import pandas as pd
 from services.analytics_services import  analytics
 from services.df_service import *
-from services.chartPlot_service import plot_flights_by_hour, plot_passengers_by_hour
+from services.chartPlot_service import *
 import altair as alt
 
 df = flight_gate_df(62,68)
 
-df = flights_per_halfHour_df(df)
+df = flight_count_hour(df)
 
-df = round_time_to_halfhour(df)
+st.dataframe(df)
 
-# Generate distributed passengers DataFrame
-# df_output = distribute_passengers_df(df)
-df_output = passenger_distribution_df(df)
+chart = plot_flights_by_hour_altair(df)
 
-st.title("Passenger Traffic")
-
-chart = alt.Chart(df_output).mark_bar().encode(
-    x=alt.X('time:N', title="Time Slots", sort=list(df_output['time'])),  # Ensure time is sorted
-    y=alt.Y('passengers:Q', title="Number of Passengers"),
-    tooltip=['time', 'passengers']
-).properties(
-    width=700,
-    height=400
-)
+# chart2 = alt.Chart(df).mark_bar(
+#         color='#89CFF0',  # Light blue for consistency
+#         opacity=0.85,
+#         size=30  # Increase bar width
+#     ).encode(
+#         x=alt.X('rounded_hour:O', title="Hour of Day", sort=list(map(str, df['rounded_hour']))),
+#         y=alt.Y('flight_counts:Q', title="Number of Flights"),
+#         tooltip=[alt.Tooltip('rounded_hour:O', title="Hour"), 
+#                  alt.Tooltip('flight_counts:Q', title="Flights")]
+#     ).properties(
+#         width=750,
+#         height=400
+#     ).configure_axis(
+#         labelFontSize=12,
+#         titleFontSize=14
+#     )
 
 st.altair_chart(chart, use_container_width=True)
 
 
-st.dataframe(df)
 
 

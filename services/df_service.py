@@ -37,7 +37,6 @@ def round_time_to_halfhour(df):
     return df
 
 
-
 def adjust_time_slot(time_str: str, offset_hours: float) -> str:
     base_time = pd.to_datetime(time_str, format='%H:%M')
     adjusted_time = (base_time + pd.Timedelta(hours=offset_hours)).strftime('%H:%M')
@@ -73,3 +72,23 @@ def passenger_distribution_df(df):
     df = round_time_to_halfhour(df)
     dist_df = distribute_passengers_df(df)
     return dist_df
+
+
+def flight_count_hour(df, time_col='time'):
+    df[time_col] = pd.to_datetime(df[time_col], errors='coerce')
+
+    # Round to the nearest hour
+    df['rounded_time'] = df[time_col].dt.round("h")
+    df['rounded_hour'] = df['rounded_time'].dt.hour  # Extract the hour
+
+    # Count flights per hour
+    flight_counts = df.groupby('rounded_hour').size().reset_index(name='flight_counts')
+
+    # Ensure all hours (e.g., 0 to 23) are included
+    all_hours = pd.DataFrame({'rounded_hour': range(24)})  # Create all hours from 0 to 23
+    flight_counts = all_hours.merge(flight_counts, on='rounded_hour', how='left').fillna(0)
+
+    # Convert flight_counts to integer
+    flight_counts['flight_counts'] = flight_counts['flight_counts'].astype(int)
+
+    return flight_counts
