@@ -1,8 +1,10 @@
 import streamlit as st
 import pandas as pd
 from services.analytics_services import  analytics
-from services.df_service import flight_gate_df, add_footprint, highlight_delayed
+from services.df_service import flight_gate_df, add_footprint, flights_per_halfHour_df, highlight_delayed, distribute_passengers_df, passenger_distribution_df, round_time_to_halfhour
 from services.chartPlot_service import plot_flights_by_hour, plot_passengers_by_hour
+import altair as alt
+
 
 st.set_page_config(layout="wide")
 
@@ -45,16 +47,13 @@ def show_analytics(df):
 def cp_page():
     st.title("Carlos and Pepes Flights (62-68)")
     data = flight_gate_df(62, 68)
-    data = add_footprint(data)
+    passenger_distribution = passenger_distribution_df(data)   
+    flights_phh = flights_per_halfHour_df(data)         
     
     hide_departed = st.checkbox("Hide Departed Flights", value=False)
 
     if hide_departed:
         data = data[data["Status"] != "Departed"]  # Filter out "Departed" rows
-    
-    plot_df = data.copy()
-    flights_fig, flights_ax = plot_flights_by_hour(plot_df)
-    passengers_fig, passengers_ax = plot_passengers_by_hour(plot_df)
     
     if isinstance(data, pd.DataFrame):
 
@@ -68,13 +67,19 @@ def cp_page():
                          .apply(highlight_delayed, axis=1), 
                         use_container_width=True,
                         height=600)
-        
-            st.subheader("Flights per Hour")
-            st.pyplot(flights_fig)
-            
-            st.subheader("Passengers per Hour")
-            st.pyplot(passengers_fig)
 
+            chart = alt.Chart(passenger_distribution).mark_bar().encode(
+                x=alt.X('time:N', title="Time Slots", sort=list(passenger_distribution['time'])),  # Ensure time is sorted
+                y=alt.Y('passengers:Q', title="Number of Passengers"),
+                tooltip=['time', 'passengers']
+            ).properties(
+                width=700,
+                height=400
+            )
+
+            st.title("Passengers Traffic")
+            st.altair_chart(chart, use_container_width=True)
+            
         with col2:
             show_analytics(data)     
     else:
@@ -83,7 +88,6 @@ def cp_page():
 def ubar_page():
     st.title("Ubar Flights (52-68)")
     data = flight_gate_df(52, 68)
-    data = add_footprint(data)
     
     hide_departed = st.checkbox("Hide Departed Flights", value=False)
 
