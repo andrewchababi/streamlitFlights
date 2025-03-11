@@ -46,8 +46,8 @@ def show_analytics(df):
 def cp_page():
     st.title("Carlos and Pepes Flights (62-68)")
     data = flight_gate_df(62, 68)
-    passenger_distribution = passenger_distribution_df(data)
-    flight_counts = flights_per_hour_distribution_df(data)   
+    passenger_distribution = passenger_distribution_df(data.copy())
+    flight_counts = flights_per_hour_distribution_df(data.copy())   
     
     hide_departed = st.checkbox("Hide Departed Flights", value=False)
 
@@ -107,8 +107,8 @@ def cp_page():
 def ubar_page():
     st.title("Ubar Flights (52-68)")
     data = flight_gate_df(52, 68)
-    passenger_distribution = passenger_distribution_df(data) 
-    flight_counts = flights_per_hour_distribution_df(data)     
+    passenger_distribution = passenger_distribution_df(data.copy())
+    flight_counts = flights_per_hour_distribution_df(data.copy())   
     
     hide_departed = st.checkbox("Hide Departed Flights", value=False)
 
