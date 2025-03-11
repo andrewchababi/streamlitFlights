@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 from services.analytics_services import  analytics
 from services.df_service import *
-from services.chartPlot_service import plot_flights_by_hour
 import altair as alt
 
 
@@ -47,16 +46,13 @@ def show_analytics(df):
 def cp_page():
     st.title("Carlos and Pepes Flights (62-68)")
     data = flight_gate_df(62, 68)
-    passenger_distribution = passenger_distribution_df(data)   
+    passenger_distribution = passenger_distribution_df(data)
+    flight_counts = flights_per_hour_distribution_df(data)   
     
     hide_departed = st.checkbox("Hide Departed Flights", value=False)
 
     if hide_departed:
         data = data[data["Status"] != "Departed"]  # Filter out "Departed" rows
-    
-    plot_df = data.copy()
-    fig, ax = plot_flights_by_hour(plot_df)
-
     
     if isinstance(data, pd.DataFrame):
 
@@ -71,20 +67,37 @@ def cp_page():
                         use_container_width=True,
                         height=600)
 
-            chart = alt.Chart(passenger_distribution).mark_bar().encode(
-                x=alt.X('time:N', title="Time Slots", sort=list(passenger_distribution['time'])),  # Ensure time is sorted
+            p_chart = alt.Chart(passenger_distribution).mark_bar().encode(
+                x=alt.X('time:N', title="Time Slots", sort=list(passenger_distribution['time'])),  
                 y=alt.Y('passengers:Q', title="Number of Passengers"),
-                tooltip=['time', 'passengers']
+                tooltip=[
+                    alt.Tooltip('time:N', title="Time "),
+                    alt.Tooltip('passengers:Q', title="Total Passengers", format=',d')  # Comma format for numbers
+                ]
             ).properties(
                 width=700,
                 height=400
             )
 
+            f_chart = alt.Chart(flight_counts).mark_bar().encode(
+                x=alt.X('rounded_hour:N', title="Time Slots", sort=list(flight_counts['rounded_hour']), axis=alt.Axis(labelAngle=0)),
+                y=alt.Y('flight_counts:Q', title="Number of Flights"),
+                tooltip=[
+                    alt.Tooltip('rounded_hour:N', title="Hour"),
+                    alt.Tooltip('flight_counts:Q', title="Flights Count", format=',d')  # Ensures readable number format
+                ]
+            ).properties(
+                width=700,
+                height=400
+)
+
+   
+
             st.title("Passengers Traffic")
-            st.altair_chart(chart, use_container_width=True)
+            st.altair_chart(p_chart, use_container_width=True)
             
             st.subheader("Flights per Hour")
-            st.pyplot(fig)
+            st.altair_chart(f_chart, use_container_width=True)
             
         with col2:
             show_analytics(data)     
@@ -94,15 +107,14 @@ def cp_page():
 def ubar_page():
     st.title("Ubar Flights (52-68)")
     data = flight_gate_df(52, 68)
-    passenger_distribution = passenger_distribution_df(data)   
+    passenger_distribution = passenger_distribution_df(data) 
+    flight_counts = flights_per_hour_distribution_df(data)     
     
     hide_departed = st.checkbox("Hide Departed Flights", value=False)
 
     if hide_departed:
         data = data[data["Status"] != "Departed"]  # Filter out "Departed" rows
     
-    plot_df = data.copy()
-    fig, ax = plot_flights_by_hour(plot_df)
     
     if isinstance(data, pd.DataFrame):
 
@@ -117,20 +129,34 @@ def ubar_page():
                         use_container_width=True,
                         height=600)
             
-            chart = alt.Chart(passenger_distribution).mark_bar().encode(
-                x=alt.X('time:N', title="Time Slots", sort=list(passenger_distribution['time'])),  # Ensure time is sorted
+            p_chart = alt.Chart(passenger_distribution).mark_bar().encode(
+                x=alt.X('time:N', title="Time Slots", sort=list(passenger_distribution['time'])),  
                 y=alt.Y('passengers:Q', title="Number of Passengers"),
-                tooltip=['time', 'passengers']
+                tooltip=[
+                    alt.Tooltip('time:N', title="Time "),
+                    alt.Tooltip('passengers:Q', title="Total Passengers", format=',d')  # Comma format for numbers
+                ]
             ).properties(
                 width=700,
                 height=400
             )
 
+            f_chart = alt.Chart(flight_counts).mark_bar().encode(
+                x=alt.X('rounded_hour:N', title="Time Slots", sort=list(flight_counts['rounded_hour']),axis=alt.Axis(labelAngle=0)),
+                y=alt.Y('flight_counts:Q', title="Number of Flights"),
+                tooltip=[
+                    alt.Tooltip('rounded_hour:N', title="Hour"),
+                    alt.Tooltip('flight_counts:Q', title="Flights Count", format=',d')  # Ensures readable number format
+                ]
+            ).properties(
+                width=700,
+                height=400
+)
             st.title("Passengers Traffic")
-            st.altair_chart(chart, use_container_width=True)
+            st.altair_chart(p_chart, use_container_width=True)
             
             st.subheader("Flights per Hour")
-            st.pyplot(fig)
+            st.altair_chart(f_chart, use_container_width=True)
 
         with col2:
             show_analytics(data)  
