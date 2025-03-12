@@ -61,10 +61,20 @@ def distribute_passengers_df(df: pd.DataFrame) -> pd.DataFrame:
         all_rows.extend(row_distributions)
     
     # Create a new DataFrame and aggregate passengers for duplicate time slots
-    new_df = pd.DataFrame(all_rows)
-    new_df = new_df.groupby('time', as_index=False).sum()
+    distributed_df = pd.DataFrame(all_rows)
+    full_time_range = generate_halfhour_time_range()
     
-    return new_df
+    final_df = full_time_range.merge(distributed_df, on="time", how="left").fillna(0)
+    
+    final_df['passengers'] = final_df['passengers'].astype(int)
+    
+    # new_df = new_df.groupby('time', as_index=False).sum()
+    
+    return final_df
+
+def generate_halfhour_time_range(start="03:00", end="23:30"):
+    time_range = pd.date_range(start=start, end=end, freq="30min").strftime('%H:%M')
+    return pd.DataFrame({'time': time_range})
 
 def passenger_distribution_df(df):
     df = flights_per_halfHour_df(df)
