@@ -57,9 +57,9 @@ def plot_passengers_by_hour(df, time_col="time", passenger_col="Passengers"):
     # Customize labels and title
     ax.set_xlabel("Hour of Day", fontsize=12)
     ax.set_ylabel("Passengers", fontsize=12)
-    ax.set_xlim(3,23)
-    ax.set_xticks(range(3, 23))
-    ax.set_xticklabels(range(3, 23), fontsize=10)
+    ax.set_xlim(3,24)
+    ax.set_xticks(range(3, 24))
+    ax.set_xticklabels(range(3, 24), fontsize=10)
     
     plt.tight_layout()
     return fig, ax
