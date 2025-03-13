@@ -43,7 +43,7 @@ def adjust_time_slot(time_str: str, offset_hours: float) -> str:
     return adjusted_time
 
 def distribute_passengers_for_row(time_str: str, passengers: int) -> list:
-    time_offsets = [-1.5, -1.0, -0.5]  # In hours
+    time_offsets = [-2.0, -1.5, -1.0]  # In hours
     percentages = [0.25, 0.50, 0.25]
     
     distributions = []
