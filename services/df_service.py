@@ -73,7 +73,6 @@ def distribute_passengers_df(df: pd.DataFrame) -> pd.DataFrame:
     return final_df
 
 def generate_halfhour_time_range(start="03:00", end="23:30"):
-
     time_range = pd.date_range(start=start, end=end, freq="30min").strftime('%H:%M')
     return pd.DataFrame({'time': time_range})
 
@@ -84,18 +83,18 @@ def passenger_distribution_df(df):
     return dist_df
 
 
-def flight_count_hour(df, time_col='time'):
+def flights_per_hour_distribution_df(df, time_col='time'):
     df[time_col] = pd.to_datetime(df[time_col], errors='coerce')
 
     # Round to the nearest hour
     df['rounded_time'] = df[time_col].dt.round("h")
-    df['rounded_hour'] = df['rounded_time'].dt.hour  # Extract the hour
+    df['rounded_hour'] = df['rounded_time'].dt.hour  
 
     # Count flights per hour
     flight_counts = df.groupby('rounded_hour').size().reset_index(name='flight_counts')
 
-    # Ensure all hours (e.g., 0 to 23) are included
-    all_hours = pd.DataFrame({'rounded_hour': range(24)})  # Create all hours from 0 to 23
+    # Ensure all hours (0 to 23) are included
+    all_hours = pd.DataFrame({'rounded_hour': range(3, 24)})  # Now starts at 3 AM
     flight_counts = all_hours.merge(flight_counts, on='rounded_hour', how='left').fillna(0)
 
     # Convert flight_counts to integer
