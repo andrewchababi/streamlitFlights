@@ -1,32 +1,21 @@
-from scripts.script import process_flights_to_df, url
-from flight_passenger_map import flight_mappings
 import pandas as pd
+import altair as alt
+from flight_passengers_footprint import flight_mappings_excel
 
-def flight_gate_df(g1, g2):
-    if g1 >= g2: 
-        return "Please enter gate1 lower than gate 2."
-    df = process_flights_to_df(url=url)
-    filtered_df = df[(df['Gate'] >= g1) & (df['Gate'] <= g2)].reset_index(drop=True)
-    data = add_footprint(filtered_df)
-    return data
-
+def organized_flights_by_day(df):
+    grouped_flights = {date: flights for date, flights in df.groupby("Date")}
+    return grouped_flights
+ 
 def add_footprint(df):
     df["Passengers"] = 0
     df["Passengers"] = df["Flight number"].apply(assess_passengers)
     return df
 
 def assess_passengers(unique_display_number): 
-    return flight_mappings.get(unique_display_number, 188)
-
-def highlight_delayed(row):
-    """Style function for pandas Styler"""
-    if row['Status'] == 'Delayed' or row['Status'] == 'Cancelled':
-        return ['background-color: #800020'] * len(row)  # Light red
-    return [''] * len(row)
-
+    return flight_mappings_excel.get(unique_display_number, 188)
 
 def flights_per_halfHour_df(df):
-    x_df = df[['AirlineName', 'time', 'Passengers']].copy()
+    x_df = df[['Date', 'time', 'Flight number','Passengers']].copy()
     x_df['time'] = pd.to_datetime(x_df['time'])
     return x_df
     
@@ -90,3 +79,27 @@ def flights_per_hour_distribution_df(df, time_col='time'):
     flight_counts['flight_counts'] = flight_counts['flight_counts'].astype(int)
 
     return flight_counts
+
+def plot_passenger_traffic(df):
+    """
+    Generates a bar chart for passenger traffic using Altair
+    """
+    # Ensure time column is sorted properly
+    df["time"] = pd.to_datetime(df["time"], format="%H:%M")
+    df = df.sort_values("time")
+    df["time"] = df["time"].dt.strftime("%H:%M")  # Convert back to string for plotting
+
+    p_chart = alt.Chart(df).mark_bar(color="#3498db").encode(
+        x=alt.X('time:N', title="Time Slots", sort=list(df['time']), axis=alt.Axis(labelAngle=-45)),
+        y=alt.Y('passengers:Q', title="Number of Passengers"),
+        tooltip=[
+            alt.Tooltip('time:N', title="Time Slot"),
+            alt.Tooltip('passengers:Q', title="Passengers", format=',d')  # Formatted number
+        ]
+    ).properties(
+        width=800,
+        height=400,
+        title="Passengers Traffic"
+    )
+
+    return p_chart

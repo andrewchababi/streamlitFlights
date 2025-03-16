@@ -9,7 +9,7 @@ def plot_flights_by_hour(df, time_col="time"):
     df['rounded_time'] = df[time_col].dt.round("h")
     df['rounded_hour'] = df['rounded_time'].dt.hour
     
-    flight_counts = df.groupby('rounded_hour').size().reindex(range(24), fill_value=0)
+    fflight_counts = df.groupby('rounded_hour').size().reset_index(name='flights')
     
     # Set style using proper reference
     sns.set_theme(

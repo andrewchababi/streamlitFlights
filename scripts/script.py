@@ -31,7 +31,10 @@ def format_json_data(json_data):
     return json.dumps(json_data, indent=4)
 
 def convert_to_dataframe(json_data, key='returnValue', section='flightsForToday'):
-    return pd.json_normalize(json_data[key][section])
+    df = pd.json_normalize(json_data[key][section])
+    print(df)
+    return df 
+
 
 @st.cache_data(ttl=3600)
 def process_flights_to_df(url):
@@ -58,5 +61,4 @@ def process_flights_to_df(url):
     new_df['Gate'] = new_df['Gate'].str.extract('(\d+)')  # Extract digits
     new_df = new_df.dropna()
     new_df['Gate'] = new_df['Gate'].astype(int)
-
     return new_df

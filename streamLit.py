@@ -89,9 +89,7 @@ def cp_page():
             ).properties(
                 width=700,
                 height=400
-)
-
-   
+            )
 
             st.title("Passengers Traffic")
             st.altair_chart(p_chart, use_container_width=True)
@@ -105,12 +103,12 @@ def cp_page():
         st.error(data)
 
 def ubar_page():
-    st.title("Ubar Flights (52-68)")
-    data = flight_gate_df(52, 68)
-    passenger_distribution = passenger_distribution_df(data.copy())
-    flight_counts = flights_per_hour_distribution_df(data.copy())   
+    st.title("Ubar Flights (50-68)")
+    data = flight_gate_df(50, 68)
     
     hide_departed = st.checkbox("Hide Departed Flights", value=False)
+    passenger_distribution = passenger_distribution_df(data.copy())
+    flight_counts = flights_per_hour_distribution_df(data.copy())   
 
     if hide_departed:
         data = data[data["Status"] != "Departed"]  # Filter out "Departed" rows
