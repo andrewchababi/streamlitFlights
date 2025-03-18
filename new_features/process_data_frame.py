@@ -89,17 +89,18 @@ def plot_passenger_traffic(df):
     df = df.sort_values("time")
     df["time"] = df["time"].dt.strftime("%H:%M")  # Convert back to string for plotting
 
+    time_slots = pd.date_range(start=df["time"].min(), end=df["time"].max(), freq="30min").strftime("%H:%M")
+    
     p_chart = alt.Chart(df).mark_bar(color="#3498db").encode(
-        x=alt.X('time:N', title="Time Slots", sort=list(df['time']), axis=alt.Axis(labelAngle=-45)),
+        x=alt.X('time:N', title="Time", sort=list(df['time']), axis=alt.Axis(labelAngle=-90, tickCount=len(time_slots))),
         y=alt.Y('passengers:Q', title="Number of Passengers"),
         tooltip=[
-            alt.Tooltip('time:N', title="Time Slot"),
+            alt.Tooltip('time:N', title="Time"),
             alt.Tooltip('passengers:Q', title="Passengers", format=',d')  # Formatted number
         ]
     ).properties(
         width=800,
         height=400,
-        title="Passengers Traffic"
     )
 
     return p_chart
