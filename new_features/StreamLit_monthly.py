@@ -3,32 +3,6 @@ import pandas as pd
 from monthly_flight_scripts import extract_flight_data_excel
 from process_data_frame import *
 
-# Apply dark mode styling
-st.markdown(
-    """
-    <style>
-        .reportview-container {
-            background-color: #2f2f2f;
-            color: white;
-        }
-        .sidebar .sidebar-content {
-            background-color: #2f2f2f;
-            color: white;
-        }
-        .widget-label {
-            color: white;
-        }
-        .streamlit-expanderHeader {
-            color: white;
-        }
-        .css-ffhzg2 {
-            color: white;
-        }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
-
 # Initialize session state
 if 'current_page' not in st.session_state:
     st.session_state.current_page = "home"
