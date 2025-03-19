@@ -32,7 +32,6 @@ def format_json_data(json_data):
 
 def convert_to_dataframe(json_data, key='returnValue', section='flightsForToday'):
     df = pd.json_normalize(json_data[key][section])
-    print(df)
     return df 
 
 

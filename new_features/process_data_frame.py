@@ -31,10 +31,16 @@ def adjust_time_slot(time_str: str, offset_hours: float) -> str:
     return adjusted_time
 
 def distribute_passengers_for_row(time_str: str, passengers: int) -> list:
-    time_offsets = [-1.5, -1.0, -0.5]  # In hours
+    time_offsets = [-2.0, -1.5, -1.0]  # In hours
     percentages = [0.25, 0.50, 0.25]
     
     distributions = []
+
+    special_times = ["07:30", "14:30", "20:30"]
+
+    if time_str in special_times:
+        passengers *= 2
+
     for offset, pct in zip(time_offsets, percentages):
         adjusted_time = adjust_time_slot(time_str, offset)
         distributions.append({'time': adjusted_time, 'passengers': int(passengers * pct)})

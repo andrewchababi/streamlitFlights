@@ -188,8 +188,6 @@ for aircraft, flights_list in flight_aircraft_mapping.items():
         flight_mappings_excel[flight] = {
             passengers
         }
-        
-print(flight_mappings_excel)
 
 flight_mappings_excel = {
     "TS284": 166, "WG6146": 157, "TS890": 164, "F82100": 157, "WG378": 160,
