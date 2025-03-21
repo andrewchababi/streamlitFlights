@@ -59,3 +59,5 @@ for day in first_14_days:
     # Display Passenger Traffic Graph
     st.write("#### Passenger Traffic")
     st.altair_chart(plot_passenger_traffic(passenger_traffic_df), use_container_width=True)
+
+    

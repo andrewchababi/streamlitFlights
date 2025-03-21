@@ -70,6 +70,7 @@ def cp_page():
             p_chart = alt.Chart(passenger_distribution).mark_bar().encode(
                 x=alt.X('time:N', title="Time Slots", sort=list(passenger_distribution['time'])),  
                 y=alt.Y('passengers:Q', title="Number of Passengers"),
+                color=alt.value("#3498db"), 
                 tooltip=[
                     alt.Tooltip('time:N', title="Time "),
                     alt.Tooltip('passengers:Q', title="Total Passengers", format=',d')  # Comma format for numbers
@@ -82,6 +83,7 @@ def cp_page():
             f_chart = alt.Chart(flight_counts).mark_bar().encode(
                 x=alt.X('rounded_hour:N', title="Time Slots", sort=list(flight_counts['rounded_hour']), axis=alt.Axis(labelAngle=0)),
                 y=alt.Y('flight_counts:Q', title="Number of Flights"),
+                color=alt.value("#3498db"), 
                 tooltip=[
                     alt.Tooltip('rounded_hour:N', title="Hour"),
                     alt.Tooltip('flight_counts:Q', title="Flights Count", format=',d')  # Ensures readable number format
@@ -130,6 +132,7 @@ def ubar_page():
             p_chart = alt.Chart(passenger_distribution).mark_bar().encode(
                 x=alt.X('time:N', title="Time Slots", sort=list(passenger_distribution['time'])),  
                 y=alt.Y('passengers:Q', title="Number of Passengers"),
+                color=alt.value("#3498db"), 
                 tooltip=[
                     alt.Tooltip('time:N', title="Time "),
                     alt.Tooltip('passengers:Q', title="Total Passengers", format=',d')  # Comma format for numbers
@@ -142,6 +145,7 @@ def ubar_page():
             f_chart = alt.Chart(flight_counts).mark_bar().encode(
                 x=alt.X('rounded_hour:N', title="Time Slots", sort=list(flight_counts['rounded_hour']),axis=alt.Axis(labelAngle=0)),
                 y=alt.Y('flight_counts:Q', title="Number of Flights"),
+                color=alt.value("#3498db"), 
                 tooltip=[
                     alt.Tooltip('rounded_hour:N', title="Hour"),
                     alt.Tooltip('flight_counts:Q', title="Flights Count", format=',d')  # Ensures readable number format

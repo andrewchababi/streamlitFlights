@@ -36,10 +36,15 @@ def distribute_passengers_for_row(time_str: str, passengers: int) -> list:
     
     distributions = []
 
-    special_times = ["07:30", "14:30", "20:30"]
+    special_times = ["07:30", "20:30"]
 
-    if time_str in special_times:
-        passengers *= 2
+    if time_str == "14:30":
+        passengers *= 3 
+    elif time_str in special_times:
+        passengers *= 2  
+    else:
+        passengers *= 1
+
 
     for offset, pct in zip(time_offsets, percentages):
         adjusted_time = adjust_time_slot(time_str, offset)
@@ -87,19 +92,20 @@ def flights_per_hour_distribution_df(df, time_col='time'):
     return flight_counts
 
 def plot_passenger_traffic(df):
-    """
-    Generates a bar chart for passenger traffic using Altair
-    """
-    # Ensure time column is sorted properly
-    df["time"] = pd.to_datetime(df["time"], format="%H:%M")
-    df = df.sort_values("time")
-    df["time"] = df["time"].dt.strftime("%H:%M")  # Convert back to string for plotting
-
-    time_slots = pd.date_range(start=df["time"].min(), end=df["time"].max(), freq="30min").strftime("%H:%M")
+   
+    # Ensure time column is parsed, sorted, and formatted
+    df["time"] = pd.to_datetime(df["time"], format="%H:%M").dt.strftime("%H:%M")
     
-    p_chart = alt.Chart(df).mark_bar(color="#3498db").encode(
-        x=alt.X('time:N', title="Time", sort=list(df['time']), axis=alt.Axis(labelAngle=-90, tickCount=len(time_slots))),
+    # Generate the full set of time slots (every 30 minutes between the min and max time)
+    time_slots = pd.date_range(df["time"].min(), df["time"].max(), freq="30min").strftime("%H:%M")
+    
+    # Merge with the original data, filling missing time slots with zero passengers
+    df = pd.merge(pd.DataFrame({'time': time_slots}), df, on="time", how="left").fillna({'passengers': 0}) 
+
+    p_chart = alt.Chart(df).mark_bar().encode(
+        x=alt.X('time:N', title="Time Slots", sort=list(df['time']), axis=alt.Axis(labelAngle=-90, tickCount=len(time_slots))),
         y=alt.Y('passengers:Q', title="Number of Passengers"),
+        color=alt.value("#3498db"), 
         tooltip=[
             alt.Tooltip('time:N', title="Time"),
             alt.Tooltip('passengers:Q', title="Passengers", format=',d')  # Formatted number
