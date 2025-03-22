@@ -1,27 +1,7 @@
 import streamlit as st
 import pandas as pd
 from monthly_flight_scripts import extract_flight_data_excel
-from process_data_frame import *
-
-# Initialize session state
-if 'current_page' not in st.session_state:
-    st.session_state.current_page = "home"
-
-# Page rendering functions
-def home_page():
-    st.title("Airport Flight Analytics Dashboard ✈️")
-    st.write("""
-    Welcome to the Montreal Airport Flight Analytics Dashboard!
-    
-    **Features:**
-    - Real-time flight data analysis
-    - Gate-specific performance metrics
-    - Operational insights and forecasting
-    - Custom gate range analysis
-    
-    Use the sidebar to navigate between different analytical views.
-    """)
-
+from process_data_frame import plot_passenger_traffic , add_footprint, organized_flights_by_day, passenger_distribution_df
 
 df = extract_flight_data_excel()
 
@@ -36,9 +16,6 @@ df2 = organized_flights_by_day(df)
 
 # Get the first 14 days (two weeks)
 first_14_days = list(df2.keys())[:14]
-
-st.write("## Flights for the First Two Weeks")
-
 last_index = 0
 # Loop through the first 14 days and display each day separately
 for day in first_14_days:

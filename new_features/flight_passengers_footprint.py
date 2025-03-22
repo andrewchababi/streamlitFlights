@@ -2,23 +2,59 @@ import pandas as pd
 from monthly_flight_scripts import extract_flight_data_excel
 
 flight_aircraft_mapping = {
-    "Boeing 787-9 Dreamliner": ["AC812", "AC1884"],
-    "Airbus A320": [
-        "AC876", "AC1874", "AC995", "AC944", "AC938", "AC848", "AC866", "AC50", "TS106", "TS340", "TS204",
-        "TS938", "TS498", "TS974", "TS856", "TS434", "OS74", "AC414", "AF347", "AC876", "AC1321", "TS110",
-        "TS814", "TS604", "AC866", "AC832", "TS152", "TS394", "TS384", "WG268", "AC999", "AC894", "AF345", 
-        "WG2876", "TS890", "TS102", "TS452", "TS198", "TS384", "TS758", "WG2881"
+    "Boeing 787-9 Dreamliner": [
+        "TK36", "RJ272", "AC1884", "AC812", "AT209", "AC844", "AC975", "AC50",
+        "AC870", "AC884", "AC96", "AC959", "AC876", "AC878"
     ],
-    "Airbus A321": ["AC922", "AC1331", "AC940", "AC1884", "AC866", "TS856", "TS894", "TS372", "TS102", "AC915", "TS434"],
-    "Boeing 737-800": ["AC944", "AC1792", "AC844", "AC876", "BA94", "QR764", "TS402", "TS890", "TS184", "WG2876", "TS398"],
-    "Embraer E190": ["AM681", "AC50"],
-    
-    "Airbus A380": [ "EK244" ],
-
-    "Boeing 737 MAX 8": [ "TS890"],
-
-    "Boeing 747-8": [ "AC1800" ],
-    "Boeing 747-400": ["QR764"],
+    "Airbus A320": [
+        "TS738", "AC995", "WG7292", "TS384", "TS328", "TS938", "AC866", "TS152",
+        "TS196", "TS572", "AF347", "AC832", "TS890", "TS198", "TS102", "WG6544",
+        "TS484", "WG2548", "TS204", "TS498", "TS394", "TS106", "AF345", "TS680",
+        "TS760", "AC50", "OS74", "WG2876", "WG4534", "AC876", "TS340", "WG7590",
+        "AC944", "TS758", "AC1321", "AC894", "WG268", "WG6828", "WG5263",
+        "AC1874", "AC938", "TS712", "AC414", "TS974", "TS284", "TS814", "TS856",
+        "AC999", "WG774", "WG2881", "TS218", "TS452", "TS250", "TS356", "WG5619",
+        "TS434", "WG6204", "TS604", "AC848", "AC920", "TS110"
+    ],
+    "Airbus A321": [
+        "TS328", "TS938", "AC866", "TS934", "TS572", "TS600", "TS198", "TS102",
+        "AC922", "TS484", "TS498", "AC1884", "TS106", "TS680", "TS760", "TS538",
+        "TS340", "TS684", "TS110", "AC915", "TS894", "AC1331", "TS150", "TS852",
+        "TS284", "AC940", "TS856", "TS814", "TS218", "TS356", "TS434", "TS480",
+        "TS398", "TS320", "TS372", "TS890"
+    ],
+    "Boeing 737-800": [
+        "BA94", "TS184", "WG519", "AC1792", "WG4428", "CM484", "WG2876", "AC876",
+        "AC944", "AC844", "QR764", "WG4426", "WG5477", "WG764", "WG5463", "TS402",
+        "TS398", "WG6404", "TS890"
+    ],
+    "Embraer E190": [
+        "AM681", "AC50"
+    ],
+    "Airbus A380": [
+        "EK244"
+    ],
+    "Boeing 737 MAX 8": [
+        "WG2548", "WG6552", "WG5357", "WG4534", "WG7590", "WG6544", "WG774", "TS890"
+    ],
+    "Boeing 747-8": [
+        "AC1800"
+    ],
+    "Boeing 747-400": [
+        "QR764"
+    ],
+    "Airbus A350-900": [
+        "LH475"
+    ],
+    "Airbus A350-1000": [
+        "BA94"
+    ],
+    "Boeing 777-300ER": [
+        "QR764"
+    ],
+    "Airbus A330-300": [
+        "AC832", "AC822", "AC834"
+    ]
 }
 
 aircraft_capacity = {
@@ -140,7 +176,7 @@ for aircraft, flights_list in flight_aircraft_mapping.items():
 
         # Ensure that max_capacity is a number and calculate the passengers
         if isinstance(max_capacity, int):
-            passengers = (max_capacity * load_factor)
+            passengers = round(max_capacity * load_factor)
         else:
             passengers = 188  # If the capacity is not found, mark as 188
 

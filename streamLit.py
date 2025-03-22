@@ -108,9 +108,10 @@ def ubar_page():
     st.title("Ubar Flights (50-68)")
     data = flight_gate_df(50, 68)
     
-    hide_departed = st.checkbox("Hide Departed Flights", value=False)
     passenger_distribution = passenger_distribution_df(data.copy())
-    flight_counts = flights_per_hour_distribution_df(data.copy())   
+    flight_counts = flights_per_hour_distribution_df(data.copy())  
+
+    hide_departed = st.checkbox("Hide Departed Flights", value=False) 
 
     if hide_departed:
         data = data[data["Status"] != "Departed"]  # Filter out "Departed" rows
