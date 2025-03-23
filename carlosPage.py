@@ -10,10 +10,8 @@ data = add_footprint(data)
 data = organized_flights_by_day(data)
 
 today_data = data[today_str]
-print(today_data)
 
 today_passenger_distribution = passenger_distribution_df(today_data)
-print(today_passenger_distribution)
 
 chart = plot_passenger_traffic(today_passenger_distribution)
 
