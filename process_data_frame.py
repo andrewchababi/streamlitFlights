@@ -111,7 +111,7 @@ def plot_passenger_traffic(df):
 
     p_chart = alt.Chart(df).mark_bar().encode(
         x=alt.X('time:N', title="Time Slots", sort=list(df['time']), axis=alt.Axis(labelAngle=-90, tickCount=len(time_slots))),
-        y=alt.Y('passengers:Q', title="Number of Passengers"),
+        y=alt.Y('passengers:Q', title="Number of Passengers", scale=alt.Scale(domain=[0, 1200])),
         color=alt.value("#3498db"), 
         tooltip=[
             alt.Tooltip('time:N', title="Time"),

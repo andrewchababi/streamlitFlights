@@ -27,7 +27,3 @@ def extract_flight_data_excel(file_path="monthly_flights.xlsx"):
     extracted_df = international_df[["Date", "time", "Flight number"]]
     
     return extracted_df
-
-
-
-

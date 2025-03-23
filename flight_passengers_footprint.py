@@ -166,46 +166,46 @@ load_factors_by_airline = {
 }
 
 
-flight_mappings_excel = {}
+# flight_mappings_excel = {}
 
-for aircraft, flights_list in flight_aircraft_mapping.items():
-    for flight in flights_list:
-        airline_code = flight[:2]  # The first two characters of the flight number
-        load_factor = load_factors_by_airline.get(airline_code, 0.80)  # Default load factor if not found
-        max_capacity = aircraft_capacity.get(aircraft, "Unknown Capacity")  # Max capacity for the aircraft
+# for aircraft, flights_list in flight_aircraft_mapping.items():
+#     for flight in flights_list:
+#         airline_code = flight[:2]  # The first two characters of the flight number
+#         load_factor = load_factors_by_airline.get(airline_code, 0.80)  # Default load factor if not found
+#         max_capacity = aircraft_capacity.get(aircraft, "Unknown Capacity")  # Max capacity for the aircraft
 
-        # Ensure that max_capacity is a number and calculate the passengers
-        if isinstance(max_capacity, int):
-            passengers = round(max_capacity * load_factor)
-        else:
-            passengers = 188  # If the capacity is not found, mark as 188
+#         # Ensure that max_capacity is a number and calculate the passengers
+#         if isinstance(max_capacity, int):
+#             passengers = round(max_capacity * load_factor)
+#         else:
+#             passengers = 188  # If the capacity is not found, mark as 188
 
-        # Populate the dictionary with just flight number and estimated passengers
-        flight_mappings_excel[flight] = passengers 
+#         # Populate the dictionary with just flight number and estimated passengers
+#         flight_mappings_excel[flight] = passengers 
 
-# flight_mappings_excel = {
-#     "TS284": 166, "WG6146": 157, "TS890": 166, "F82100": 157, "WG378": 160,
-#     "TS398": 169, "TS538": 174, "WG7188": 154, "CM484": 114, "WG4126": 154,
-#     "AC944": 117, "AC1748": 149, "TS198": 166, "TS760": 164, "AC938": 123,
-#     "AC954": 117, "EK244": 319, "AC962": 120, "AC948": 115, "AC1838": 139,
-#     "WG5163": 154, "WG4134": 152, "WG7134": 154, "WG2189": 160, "AM681": 136,
-#     "AC999": 149, "TS106": 169, "AC1004": 117, "TS938": 169, "TS498": 166,
-#     "TS974": 164, "TS814": 164, "AC1884": 125, "LX87": 225, "AF345": 231,
-#     "AC959": 125, "WG517": 157, "WG3106": 154, "AC844": 123, "AC874": 120,
-#     "AC1792": 123, "OS74": 169, "AC995": 117, "AC832": 123, "TS196": 169,
-#     "AC1275": 125, "AF347": 231, "KL672": 262, "AC866": 117, "TS110": 172,
-#     "LH475": 261, "TS680": 166, "AC822": 125, "AC878": 115, "AC894": 141,
-#     "AT209": 233, "BA94": 260, "QR764": 319, "AF4083": 120, "AC870": 115,
-#     "S4328": 157, "AC876": 262, "TP254": 123, "AV201": 115, "RJ272": 233,
-#     "WG604": 141, "WG525": 133, "WG2743": 141, "TS738": 166, "TS894": 164,
-#     "TS356": 172, "AC922": 117, "WG434": 131, "AC1874": 120, "AC1450": 115,
-#     "WG792": 131, "AC1325": 115, "AC920": 125, "WG537": 133, "WG428": 133,
-#     "TS600": 172, "WG2789": 131, "AC1362": 117, "TS340": 169, "AF625": 231,
-#     "AC5": 125, "AC1750": 125, "TS716": 164, "WG652": 136, "TS856": 164,
-#     "AC781": 115, "TS602": 174, "AC892": 126, "TS252": 174, "AC50": 117,
-#     "TK36": 260, "AC834": 125, "AC2076": 121, "AC96": 127, "AC2176": 110,
-#     "WG6204": 133, "TS868": 172, "WG277": 133, "TS216": 172, "WG5237": 133,
-#     "WG4228": 141, "AC1800": 123, "WG5219": 133, "AC1822": 115, "WG7292": 131,
-#     "AC2196": 115, "WG5263": 133, "DM5961": 140, "WG6828": 136, "AH2701": 242,
-#     "AC72": 115, "AC884": 120, "AC98": 120, "AC812": 117, "TS150": 172
-# }
+flight_mappings_excel = {
+    "TS284": 166, "WG6146": 157, "TS890": 166, "F82100": 157, "WG378": 160,
+    "TS398": 169, "TS538": 174, "WG7188": 154, "CM484": 114, "WG4126": 154,
+    "AC944": 117, "AC1748": 149, "TS198": 166, "TS760": 164, "AC938": 123,
+    "AC954": 117, "EK244": 319, "AC962": 120, "AC948": 115, "AC1838": 139,
+    "WG5163": 154, "WG4134": 152, "WG7134": 154, "WG2189": 160, "AM681": 136,
+    "AC999": 149, "TS106": 169, "AC1004": 117, "TS938": 169, "TS498": 166,
+    "TS974": 164, "TS814": 164, "AC1884": 125, "LX87": 225, "AF345": 231,
+    "AC959": 125, "WG517": 157, "WG3106": 154, "AC844": 123, "AC874": 120,
+    "AC1792": 123, "OS74": 169, "AC995": 117, "AC832": 123, "TS196": 169,
+    "AC1275": 125, "AF347": 231, "KL672": 262, "AC866": 117, "TS110": 172,
+    "LH475": 261, "TS680": 166, "AC822": 125, "AC878": 115, "AC894": 141,
+    "AT209": 233, "BA94": 260, "QR764": 319, "AF4083": 120, "AC870": 115,
+    "S4328": 157, "AC876": 262, "TP254": 123, "AV201": 115, "RJ272": 233,
+    "WG604": 141, "WG525": 133, "WG2743": 141, "TS738": 166, "TS894": 164,
+    "TS356": 172, "AC922": 117, "WG434": 131, "AC1874": 120, "AC1450": 115,
+    "WG792": 131, "AC1325": 115, "AC920": 125, "WG537": 133, "WG428": 133,
+    "TS600": 172, "WG2789": 131, "AC1362": 117, "TS340": 169, "AF625": 231,
+    "AC5": 125, "AC1750": 125, "TS716": 164, "WG652": 136, "TS856": 164,
+    "AC781": 115, "TS602": 174, "AC892": 126, "TS252": 174, "AC50": 117,
+    "TK36": 260, "AC834": 125, "AC2076": 121, "AC96": 127, "AC2176": 110,
+    "WG6204": 133, "TS868": 172, "WG277": 133, "TS216": 172, "WG5237": 133,
+    "WG4228": 141, "AC1800": 123, "WG5219": 133, "AC1822": 115, "WG7292": 131,
+    "AC2196": 115, "WG5263": 133, "DM5961": 140, "WG6828": 136, "AH2701": 242,
+    "AC72": 115, "AC884": 120, "AC98": 120, "AC812": 117, "TS150": 172
+}
