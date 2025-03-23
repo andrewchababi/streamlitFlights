@@ -42,26 +42,10 @@ def adjust_time_slot(time_str: str, offset_hours: float) -> str:
     return adjusted_time
 
 def distribute_passengers_for_row(time_str: str, passengers: int) -> list:
-    time_offsets = [-2.5, -2.0, -1.5, -1.0, -0.5]  # In hours
-    percentages = [0.1, 0.25, 0.50, 0.25, 0.1]
+    time_offsets = [-2.5 -2.0, -1.5]  # In hours
+    percentages = [0.25, 0.50, 0.25]
     
     distributions = []
-
-    time_obj = pd.to_datetime(time_str, format='%H:%M')
-
-    # Special time range checks
-
-    if (time_obj >= pd.to_datetime("07:00", format='%H:%M')) and (time_obj <= pd.to_datetime("08:30", format='%H:%M')):
-        passengers *= 0.9
-
-    if (time_obj >= pd.to_datetime("14:00", format='%H:%M')) and (time_obj <= pd.to_datetime("15:00", format='%H:%M')):
-        passengers *= 2
-
-    if (time_obj >= pd.to_datetime("19:30", format='%H:%M')) and (time_obj < pd.to_datetime("20:30", format='%H:%M')):
-        passengers *= 1.3
-
-    else:
-        passengers *= 1  # For all other times, no change
 
     for offset, pct in zip(time_offsets, percentages):
         adjusted_time = adjust_time_slot(time_str, offset)
