@@ -16,7 +16,7 @@ def assess_passengers(unique_display_number):
 
 def flights_per_halfHour_df(df):
     x_df = df[['Date', 'time', 'Flight number','Passengers']].copy()
-    x_df['time'] = pd.to_datetime(x_df['time'])
+    x_df['time'] = pd.to_datetime(x_df['time'], format="%H:%M:%S", errors="coerce")
     return x_df
     
 

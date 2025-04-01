@@ -24,9 +24,18 @@ def extract_flight_data_excel(file_path="monthly_flights.xlsx"):
 
     international_df.index = international_df.index + 1
     
-    extracted_df = international_df[["Date", "time", "Flight number"]]
+    extracted_df = international_df[["Date", "time", "Flight number", "Destination"]]
     
     return extracted_df
+
+def unique_international_dest(df):
+
+    data = df['Destination']
+
+    unique_destinations = set(data)
+
+    return unique_destinations
+
 
 
 

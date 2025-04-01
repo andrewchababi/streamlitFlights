@@ -32,6 +32,10 @@ def format_json_data(json_data):
 
 def convert_to_dataframe(json_data, key='returnValue', section='flightsForToday'):
     df = pd.json_normalize(json_data[key][section])
+    pd.set_option('display.max_rows', None)  # No limit on the number of rows shown
+    pd.set_option('display.max_columns', None)  # No limit on the number of columns shown
+    pd.set_option('display.width', None)  # Avoid line wrapping in wide DataFrames
+    pd.set_option('display.max_colwidth', None)  # Avoid truncation of column content
     return df 
 
 
@@ -53,11 +57,7 @@ def process_flights_to_df(url):
         'PublicDisplayFlightNumber' : 'Flight number',
     }, inplace=True)
 
-    new_columns_of_interest = ['AirlineName', 'Gate', 'time', 'updatedTime', 'AirportName', 'Status', 'Flight number']
+    new_columns_of_interest = ['AirlineName', 'time', 'updatedTime', 'AirportName', 'Status', "FlightId", 'Flight number']
     new_df = flights_df[new_columns_of_interest]
 
-    new_df = new_df.copy()
-    new_df['Gate'] = new_df['Gate'].str.extract('(\d+)')  # Extract digits
-    new_df = new_df.dropna()
-    new_df['Gate'] = new_df['Gate'].astype(int)
     return new_df

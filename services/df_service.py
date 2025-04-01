@@ -1,14 +1,14 @@
 from scripts.script import process_flights_to_df, url
-from flight_passenger_map import flight_mappings
+from constants import flight_mappings, international_codes
 import pandas as pd
 
-def flight_gate_df(g1, g2):
-    if g1 >= g2: 
-        return "Please enter gate1 lower than gate 2."
+def international_flights():
     df = process_flights_to_df(url=url)
-    filtered_df = df[(df['Gate'] >= g1) & (df['Gate'] <= g2)].reset_index(drop=True)
-    data = add_footprint(filtered_df)
+    df["dest_code"] = df["FlightId"].str[-3:]
+    intl_df = df[df["dest_code"].isin(international_codes)].reset_index(drop=True)
+    data = add_footprint(intl_df)
     return data
+    
 
 def add_footprint(df):
     df["Passengers"] = 0
@@ -42,7 +42,7 @@ def adjust_time_slot(time_str: str, offset_hours: float) -> str:
     return adjusted_time
 
 def distribute_passengers_for_row(time_str: str, passengers: int) -> list:
-    time_offsets = [-2.5 -2.0, -1.5]  # In hours
+    time_offsets = [-2.5, -2.0, -1.5]  # In hours
     percentages = [0.25, 0.50, 0.25]
     
     distributions = []

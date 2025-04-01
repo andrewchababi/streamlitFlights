@@ -25,3 +25,14 @@ flight_mappings = {
     "AC2196": 115, "WG5263": 133, "DM5961": 140, "WG6828": 136, "AH2701": 242,
     "AC72": 115, "AC884": 120, "AC98": 120, "AC812": 117, "TS150": 172
 }
+
+international_codes = {
+    'MAD', 'FSP', 'ZRH', 'NAS', 'TLS', 'SJO', 'POP', 'SXM', 'CTG', 'GRU',
+    'LHR', 'AZS', 'ADZ', 'PDL', 'LRM', 'SAL', 'ZIH', 'PLS', 'NRT', 'MEX',
+    'ALG', 'NTE', 'LYS', 'DEL', 'FCO', 'SNU', 'BCN', 'PTY', 'LIM', 'VRA',
+    'DOH', 'FPO', 'CFG', 'DXB', 'RAK', 'BRU', 'GUA', 'PUJ', 'RTB', 'MBJ',
+    'PVR', 'AMS', 'TQO', 'FRA', 'ATH', 'MRS', 'HOG', 'CCC', 'MZT', 'FDF',
+    'AGP', 'TUN', 'MUC', 'CUR', 'SJD', 'GVA', 'PTP', 'CUN', 'LIR', 'MXP',
+    'LIS', 'CZM', 'VIE', 'ACA', 'ZSA', 'CMN', 'CDG', 'IST', 'AMM', 'CYO',
+    'BGI', 'RIH', 'BOG'
+}
