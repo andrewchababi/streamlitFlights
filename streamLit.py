@@ -3,7 +3,7 @@ import pandas as pd
 from services.analytics_services import  analytics
 from services.df_service import *
 import altair as alt
-
+from scripts.script import extract_flight_data_excel
 
 st.set_page_config(layout="wide")
 
@@ -104,19 +104,73 @@ def international_page():
     else:
         st.error(data)
 
-# Sidebar Navigation
+def log_in():
+    if "scheduling_password_validated" not in st.session_state:
+        st.session_state["scheduling_password_validated"] = False
+
+    if not st.session_state["scheduling_password_validated"]:
+        password = st.text_input("Enter Password to Access Scheduling", type="password")
+        if st.button("Login"):
+            if password == "0412":
+                st.session_state["scheduling_password_validated"] = True
+                st.success("Access granted!")
+                return True
+            else:
+                st.error("Incorrect password. Please try again.")
+                return False
+        return
+     
+
+
+def scheduling_page():
+    st.title("Scheduling")
+    # Extract flight data and add footprint
+    df = extract_flight_data_excel()
+    df = add_footprint(df)
+    
+    st.write("### Complete Flight Data")
+    st.dataframe(df)
+    
+    # Organize flights by day and display for the first 14 days
+    df2 = organized_flights_by_day(df)
+    first_14_days = list(df2.keys())[:14]
+    
+    for day in first_14_days:
+        col1, col2 = st.columns([1, 2])  
+
+        with col1:
+            st.write(f"### Flights for {day}")
+            day_df = df2[day]
+            day_df.index = range(1, len(day_df) + 1)  # reset index for readability
+            st.dataframe(day_df)
+
+        with col2:
+            st.write("#### Passenger Traffic")
+            passenger_traffic_df = passenger_distribution_monthly_df(day_df)
+            st.altair_chart(plot_passenger_traffic(passenger_traffic_df), use_container_width=True)
+
+# ----------------- Sidebar Navigation ----------------- #
+
 with st.sidebar:
     st.header("Navigation")
     if st.button("🏢 Home"):
         st.session_state.current_page = "home"
-    if st.button("🥃 int Analysis"):
+    if st.button("🥃 Int Analysis"):
         st.session_state.current_page = "int"
-
+    if st.button("📅 Scheduling"):
+        st.session_state.current_page = "scheduling"
+    
     st.divider()
     st.caption(f"Data last refreshed: {pd.Timestamp.now(tz='US/Eastern').strftime('%Y-%m-%d %H:%M')}")
 
-# Main content router
+# ----------------- Main Content Router ----------------- #
+
 if st.session_state.current_page == "home":
     home_page()
 elif st.session_state.current_page == "int":
     international_page()
+elif st.session_state.current_page == "scheduling":
+    access = log_in()
+    if access: 
+        scheduling_page()
+

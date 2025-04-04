@@ -1,5 +1,5 @@
 import pandas as pd
-from monthly_flight_scripts import extract_flight_data_excel
+#from monthly_flight_scripts import extract_flight_data_excel
 
 flight_aircraft_mapping = {
     "Boeing 787-9 Dreamliner": [

@@ -1,43 +1,24 @@
-from scripts.script import process_flights_to_df, url
-from constants import flight_mappings, international_codes
 import pandas as pd
 import altair as alt
-
-def international_flights():
-    df = process_flights_to_df(url=url)
-    df["dest_code"] = df["FlightId"].str[-3:]
-    intl_df = df[df["dest_code"].isin(international_codes)].reset_index(drop=True)
-    data = add_footprint(intl_df)
-    return data
+from new_features.flight_passengers_footprint import flight_mappings_excel
 
 def organized_flights_by_day(df):
     grouped_flights = {date: flights for date, flights in df.groupby("Date")}
     return grouped_flights
-
+ 
 def add_footprint(df):
     df["Passengers"] = 0
     df["Passengers"] = df["Flight number"].apply(assess_passengers)
     return df
 
 def assess_passengers(unique_display_number): 
-    return flight_mappings.get(unique_display_number, 188)
-
-def highlight_delayed(row):
-    """Style function for pandas Styler"""
-    if row['Status'] == 'Delayed' or row['Status'] == 'Cancelled':
-        return ['background-color: #800020'] * len(row)  # Light red
-    return [''] * len(row)
-
+    return flight_mappings_excel.get(unique_display_number, 188)
 
 def flights_per_halfHour_df(df):
-    x_df = df[['AirlineName', 'time', 'Passengers']].copy()
-    x_df['time'] = pd.to_datetime(x_df['time'])
-    return x_df
-
-def flights_per_halfHour_monthly_df(df):
     x_df = df[['Date', 'time', 'Flight number','Passengers']].copy()
     x_df['time'] = pd.to_datetime(x_df['time'], format="%H:%M:%S", errors="coerce")
     return x_df
+    
 
 def round_time_to_halfhour(df): 
     df['time'] = df['time'].dt.round('30min').dt.strftime('%H:%M')
@@ -50,10 +31,27 @@ def adjust_time_slot(time_str: str, offset_hours: float) -> str:
     return adjusted_time
 
 def distribute_passengers_for_row(time_str: str, passengers: int) -> list:
-    time_offsets = [-2.5, -2.0, -1.5]  # In hours
-    percentages = [0.25, 0.50, 0.25]
+    time_offsets = [-2.5, -2.0, -1.5, -1.0, -0.5]  # In hours
+    percentages = [0.1, 0.25, 0.50, 0.25, 0.1]
     
     distributions = []
+
+    time_obj = pd.to_datetime(time_str, format='%H:%M')
+
+    # Special time range checks
+
+    if (time_obj >= pd.to_datetime("07:00", format='%H:%M')) and (time_obj <= pd.to_datetime("08:30", format='%H:%M')):
+        passengers *= 0.9
+
+    if (time_obj >= pd.to_datetime("14:00", format='%H:%M')) and (time_obj <= pd.to_datetime("15:00", format='%H:%M')):
+        passengers *= 2
+
+    if (time_obj >= pd.to_datetime("19:30", format='%H:%M')) and (time_obj < pd.to_datetime("20:30", format='%H:%M')):
+        passengers *= 1
+
+    else:
+        passengers *= 1  # For all other times, no change
+
 
     for offset, pct in zip(time_offsets, percentages):
         adjusted_time = adjust_time_slot(time_str, offset)
@@ -69,29 +67,13 @@ def distribute_passengers_df(df: pd.DataFrame) -> pd.DataFrame:
         all_rows.extend(row_distributions)
     
     # Create a new DataFrame and aggregate passengers for duplicate time slots
-    distributed_df = pd.DataFrame(all_rows)
-    full_time_range = generate_halfhour_time_range()
+    new_df = pd.DataFrame(all_rows)
+    new_df = new_df.groupby('time', as_index=False).sum()
     
-    final_df = full_time_range.merge(distributed_df, on="time", how="left").fillna(0)
-    
-    final_df['passengers'] = final_df['passengers'].astype(int)
-    
-    # new_df = new_df.groupby('time', as_index=False).sum()
-    
-    return final_df
-
-def generate_halfhour_time_range(start="03:00", end="23:30"):
-    time_range = pd.date_range(start=start, end=end, freq="30min").strftime('%H:%M')
-    return pd.DataFrame({'time': time_range})
+    return new_df
 
 def passenger_distribution_df(df):
     df = flights_per_halfHour_df(df)
-    df = round_time_to_halfhour(df)
-    dist_df = distribute_passengers_df(df)
-    return dist_df
-
-def passenger_distribution_monthly_df(df):
-    df = flights_per_halfHour_monthly_df(df)
     df = round_time_to_halfhour(df)
     dist_df = distribute_passengers_df(df)
     return dist_df
