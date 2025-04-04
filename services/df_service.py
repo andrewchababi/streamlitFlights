@@ -3,6 +3,14 @@ from constants import flight_mappings, international_codes
 import pandas as pd
 import altair as alt
 
+def flight_gate_df(g1,g2):
+    df = process_flights_to_df(url=url)
+    if g1 >= g2:
+        return "please enter g1 lower then g2"
+    filtered_df = df[(df['Gate'] >= g1) & (df['Gate'] <= g2)].reset_index(drop=True)
+    data = add_footprint(filtered_df)
+    return data
+
 def international_flights():
     df = process_flights_to_df(url=url)
     df["dest_code"] = df["FlightId"].str[-3:]
