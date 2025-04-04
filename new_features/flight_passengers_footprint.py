@@ -166,7 +166,7 @@ load_factors_by_airline = {
 }
 
 
-flight_mappings_excel = {}
+flight_mappings = {}
 
 for aircraft, flights_list in flight_aircraft_mapping.items():
     for flight in flights_list:
@@ -181,7 +181,7 @@ for aircraft, flights_list in flight_aircraft_mapping.items():
             passengers = 188  # If the capacity is not found, mark as 188
 
         # Populate the dictionary with just flight number and estimated passengers
-        flight_mappings_excel[flight] = passengers 
+        flight_mappings[flight] = passengers 
 
 # flight_mappings_excel = {
 #     "TS284": 166, "WG6146": 157, "TS890": 166, "F82100": 157, "WG378": 160,

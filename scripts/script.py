@@ -57,8 +57,13 @@ def process_flights_to_df(url):
         'PublicDisplayFlightNumber' : 'Flight number',
     }, inplace=True)
 
-    new_columns_of_interest = ['AirlineName', 'time', 'updatedTime', 'AirportName', 'Status', "FlightId", 'Flight number']
+    new_columns_of_interest = ['AirlineName', 'Gate', 'time', 'updatedTime', 'AirportName', 'Status', "FlightId", 'Flight number']
     new_df = flights_df[new_columns_of_interest]
+
+    new_df = new_df.copy()
+    new_df['Gate'] = new_df['Gate'].str.extract('(\d+)')  # Extract digits
+    new_df = new_df.dropna()
+    new_df['Gate'] = new_df['Gate'].astype(int)
 
     return new_df
 
