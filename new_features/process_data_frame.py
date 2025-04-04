@@ -1,6 +1,6 @@
 import pandas as pd
 import altair as alt
-from flight_passengers_footprint import flight_mappings_excel
+from new_features.flight_passengers_footprint import flight_mappings_excel
 
 def organized_flights_by_day(df):
     grouped_flights = {date: flights for date, flights in df.groupby("Date")}
