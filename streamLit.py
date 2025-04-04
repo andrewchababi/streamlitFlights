@@ -133,9 +133,8 @@ def scheduling_page():
     
     # Organize flights by day and display for the first 14 days
     df2 = organized_flights_by_day(df)
-    first_14_days = list(df2.keys())[:14]
     
-    for day in first_14_days:
+    for day in df2.keys():
         col1, col2 = st.columns([1, 2])  
 
         with col1:
