@@ -2,9 +2,9 @@ import streamlit as st
 from services.df_service import *
 from components.dashboard import *
 
+st.set_page_config(layout="wide")
 
 def dashboard():
-    st.set_page_config(layout="wide")
     st.title(f"Flight Analytics")
     flights = get_session_flights()
     passenger_dist = passenger_distribution_df(flights.copy())
