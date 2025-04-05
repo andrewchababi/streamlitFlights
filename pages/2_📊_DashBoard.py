@@ -2,6 +2,7 @@ import streamlit as st
 from services.df_service import *
 from components.dashboard import *
 from components.signIn import *
+from session_handling import set_flights, get_session_flights
 
 st.set_page_config(layout="wide")
 
