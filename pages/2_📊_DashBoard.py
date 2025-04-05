@@ -1,6 +1,7 @@
 import streamlit as st 
 from services.df_service import *
 from components.dashboard import *
+from components.signIn import *
 
 st.set_page_config(layout="wide")
 
@@ -17,14 +18,11 @@ def dashboard():
     
     if isinstance(flights, pd.DataFrame):
         flights = reset_data_index(flights)
-        
-        col1, col2 = st.columns([3,2])
 
+        col1, col2 = st.columns([3,2])
         with col1:
             display_flights_df()
-            
             display_passenger_chart(passenger_dist)
-            
             display_flights_chart(flight_count)
            
         with col2:
@@ -34,12 +32,8 @@ def dashboard():
         st.error(flights)
 
 
-
-
-
-# "st.session_state object:", st.session_state
 if st.session_state.get('current_user') is None:
-    st.write("Please sign in.")
+    sign_in_display()
 else:
     current = st.session_state['current_user']
     set_flights()
