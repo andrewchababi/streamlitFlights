@@ -21,7 +21,7 @@ def dashboard():
 
         col1, col2 = st.columns([3,2])
         with col1:
-            display_flights_df()
+            display_flights_df(flights)
             display_passenger_chart(passenger_dist)
             display_flights_chart(flight_count)
            

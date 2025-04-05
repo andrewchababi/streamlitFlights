@@ -26,9 +26,7 @@ def reset_data_index(df: pd.DataFrame):
     data.index += 1
     return data
 
-def display_flights_df(): 
-    flights_df = get_session_flights() 
-
+def display_flights_df(flights_df): 
     st.subheader("Flight Data")
     st.dataframe(flights_df.style.format({'Gate': '{:.0f}'})
                          .apply(highlight_delayed, axis=1), 
