@@ -3,7 +3,6 @@ import pandas as pd
 from services.analytics_services import analytics
 from services.df_service import highlight_delayed
 from services.chartPlot_service import create_flights_chart, create_passenger_dist_chart
-from session_handling import set_flights, get_session_flights
 
 current = st.session_state['current_user']
 
