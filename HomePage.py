@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 from services.analytics_services import analytics
 from services.df_service import *
+from services.chartPlot_service import create_passenger_dist_chart, create_flights_chart
 import altair as alt
 
 
@@ -67,31 +68,9 @@ def cp_page():
                         use_container_width=True,
                         height=600)
 
-            p_chart = alt.Chart(passenger_distribution).mark_bar().encode(
-                x=alt.X('time:N', title="Time Slots", sort=list(passenger_distribution['time'])),  
-                y=alt.Y('passengers:Q', title="Number of Passengers"),
-                tooltip=[
-                    alt.Tooltip('time:N', title="Time "),
-                    alt.Tooltip('passengers:Q', title="Total Passengers", format=',d')  # Comma format for numbers
-                ]
-            ).properties(
-                width=700,
-                height=400
-            )
+            p_chart = create_passenger_dist_chart(passenger_distribution) 
 
-            f_chart = alt.Chart(flight_counts).mark_bar().encode(
-                x=alt.X('rounded_hour:N', title="Time Slots", sort=list(flight_counts['rounded_hour']), axis=alt.Axis(labelAngle=0)),
-                y=alt.Y('flight_counts:Q', title="Number of Flights"),
-                tooltip=[
-                    alt.Tooltip('rounded_hour:N', title="Hour"),
-                    alt.Tooltip('flight_counts:Q', title="Flights Count", format=',d')  # Ensures readable number format
-                ]
-            ).properties(
-                width=700,
-                height=400
-            )
-
-   
+            f_chart = create_flights_chart(flight_counts)
 
             st.title("Passengers Traffic")
             st.altair_chart(p_chart, use_container_width=True)

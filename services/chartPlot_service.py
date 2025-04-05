@@ -63,3 +63,33 @@ def plot_passengers_by_hour(df, time_col="time", passenger_col="Passengers"):
     
     plt.tight_layout()
     return fig, ax
+
+
+def create_passenger_dist_chart(passenger_dist: pd.DataFrame):
+    p_chart = alt.Chart(passenger_dist).mark_bar().encode(
+        x=alt.X('time:N', title="Time Slots", sort=list(passenger_dist['time'])),  
+        y=alt.Y('passengers:Q', title="Number of Passengers"),
+        tooltip=[
+                    alt.Tooltip('time:N', title="Time "),
+                    alt.Tooltip('passengers:Q', title="Total Passengers", format=',d')  # Comma format for numbers
+                ]
+            ).properties(
+                width=700,
+                height=400
+            )
+    return p_chart
+
+def create_flights_chart(flight_count: pd.DataFrame):
+    f_chart = alt.Chart(flight_count).mark_bar().encode(
+        x=alt.X('rounded_hour:N', title="Time Slots", sort=list(flight_count['rounded_hour']), axis=alt.Axis(labelAngle=0)),
+        y=alt.Y('flight_counts:Q', title="Number of Flights"),
+        tooltip=[
+            alt.Tooltip('rounded_hour:N', title="Hour"),
+            alt.Tooltip('flight_counts:Q', title="Flights Count", format=',d')  # Ensures readable number format
+        ]
+    ).properties(
+        width=700,
+        height=400
+    )
+    
+    return f_chart
