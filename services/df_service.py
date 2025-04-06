@@ -1,5 +1,5 @@
 from scripts.script import process_flights_to_df, url
-from flight_passenger_map import flight_mappings
+from constants import *
 import pandas as pd
 
 def flight_gate_df(g1, g2):
@@ -10,6 +10,17 @@ def flight_gate_df(g1, g2):
     data = add_footprint(filtered_df)
     
     return data
+
+def international_flights():
+    df = process_flights_to_df(url=url)
+    df["dest_code"] = df["FlightId"].str[-3:]
+    intl_df = df[df["dest_code"].isin(international_codes)].reset_index(drop=True)
+    data = add_footprint(intl_df)
+    return data
+
+def organized_flights_by_day(df):
+    grouped_flights = {date: flights for date, flights in df.groupby("Date")}
+    return grouped_flights
 
 def add_footprint(df):
     df["Passengers"] = 0
@@ -29,6 +40,11 @@ def highlight_delayed(row):
 def flights_per_halfHour_df(df):
     x_df = df[['AirlineName', 'time', 'Passengers']].copy()
     x_df['time'] = pd.to_datetime(x_df['time'])
+    return x_df
+
+def flights_per_halfHour_monthly_df(df):
+    x_df = df[['Date', 'time', 'Flight number','Passengers']].copy()
+    x_df['time'] = pd.to_datetime(x_df['time'], format="%H:%M:%S", errors="coerce")
     return x_df
     
 
@@ -82,6 +98,11 @@ def passenger_distribution_df(df):
     dist_df = distribute_passengers_df(df)
     return dist_df
 
+def passenger_distribution_monthly_df(df):
+    df = flights_per_halfHour_monthly_df(df)
+    df = round_time_to_halfhour(df)
+    dist_df = distribute_passengers_df(df)
+    return dist_df
 
 def flights_per_hour_distribution_df(df, time_col='time'):
     df[time_col] = pd.to_datetime(df[time_col], errors='coerce')
