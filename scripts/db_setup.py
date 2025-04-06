@@ -39,3 +39,12 @@ def display_all():
     conn.close()
     print(df)
 
+def update_password(username, new_password):
+    update_query = "UPDATE users SET passcode = ? WHERE username = ?"
+    
+    cursor.execute(update_query, (new_password, username))
+    
+    conn.commit()
+    conn.close()
+    
+    print(f"Password updated for user '{username}' to '{new_password}'.")
