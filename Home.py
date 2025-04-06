@@ -18,4 +18,6 @@ if st.session_state.get("current_user") is None:
     new_customer_display()
 else: 
     login_component()
+    # TODO: make a welcome component tosignal what user is signed in
+    # welcome_component()
     navigation_component()

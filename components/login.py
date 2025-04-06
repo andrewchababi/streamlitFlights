@@ -18,7 +18,6 @@ def login_component():
             st.rerun()
         else:
             st.error("❌ Invalid username or password. Please try again.")
-    
     return False
     
 def navigation_component():
@@ -34,5 +33,6 @@ def navigation_component():
             st.switch_page("pages/3_🗓️_Scheduling.py")
         if st.button("Log Out"):
             st.session_state["current_user"] = None
+            st.session_state.access = False
             st.rerun()
 

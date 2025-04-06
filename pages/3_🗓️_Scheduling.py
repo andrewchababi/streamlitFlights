@@ -3,9 +3,23 @@ from services.df_service import *
 from scripts.script import extract_flight_data_excel
 from components.scheduling import *
 from components.signIn import *
-from session_handling import set_flights
 
 st.set_page_config(layout="wide")
+
+
+def scheduling_log_in():
+    true_password = st.session_state["current_user"].get('scheduling_code')
+
+    password = st.text_input("Enter Password to Access Scheduling", type="password")
+    if st.button("Login"):
+        if int(password) == true_password:
+            st.success("Access granted!")
+            st.session_state.access = True
+            st.rerun()
+        else:
+            st.error("Incorrect password. Please try again.")
+            st.session_state.access = False
+     
 
 def scheduling():
     st.title(f"Scheduling Analytics")
@@ -19,9 +33,14 @@ def scheduling():
 
     display_flights_day(daily_flights)
 
+if 'access' not in st.session_state:
+    st.session_state.access = False
 
 if st.session_state.get('current_user') is None:
     sign_in_display()
+
 else:
-    current = st.session_state['current_user']
-    scheduling() 
+    if st.session_state.access == True:
+        scheduling() 
+    else:
+        scheduling_log_in()
