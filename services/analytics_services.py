@@ -23,17 +23,15 @@ def total_delayed_flights(df):
 def prep_closing_time(df):
     last_flight = df.tail(1).copy()
     last_flight['time'] = pd.to_datetime(last_flight['time'], errors='coerce').dt.round('h')
-    
-    # Get the actual timestamp from the last row.
+
     last_time = last_flight['time'].iloc[0]
-    
     last_hour = last_time.hour
-    prep_close_hour = last_hour - 2
-    
-    # Format the hours into a string (e.g., "07:00 PM").
+
+    prep_close_hour = (last_hour + 24 - 2) % 24
+
     formatted_time_p = datetime.strptime(str(prep_close_hour), "%H").strftime("%I:%M %p")
     formatted_time_c = datetime.strptime(str(last_hour), "%H").strftime("%I:%M %p")
-    
+
     return formatted_time_p, formatted_time_c
 
 def analytics(df):
