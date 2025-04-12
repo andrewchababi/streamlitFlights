@@ -27,6 +27,7 @@ def dashboard():
             display_flights_chart(flight_count)
            
         with col2:
+            refresh_button()
             show_analytics(flights)
     
     else:

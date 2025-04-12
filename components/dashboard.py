@@ -49,3 +49,7 @@ def display_flights_chart(flight_count: pd.DataFrame):
     st.altair_chart(f_chart, use_container_width=True)
     st.write('')
             
+def refresh_button():
+    refresh = st.button('Update Data')
+    if  refresh: 
+        st.rerun()
