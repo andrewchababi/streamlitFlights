@@ -1,11 +1,27 @@
 import streamlit as st
 import json, os
+import csv
+from datetime import datetime
 from typing import Callable, List
 
 PERSIST_FILE = "counts.json"
 ROLES = ["Bartender", "Waiter 1 ", "Waiter 2 ", "Waiter 3 ", "Waiter 4 "]
 
 
+def log_timestamp(role: str, new_value: int, csv_path: str = "timestamps.csv"):
+    """
+    Append (role, timestamp) as a new row to the CSV.
+    If the file is new, write a header first.
+    """
+    file_exists = os.path.exists(csv_path)
+    with open(csv_path, mode="a", newline="") as f:
+        writer = csv.writer(f)
+        # 1) Write header row the first time
+        if not file_exists:
+            writer.writerow(["role", "timestamp"])
+        # 2) Always write your data row
+        writer.writerow([role, datetime.now().isoformat()])
+       
 
 def load_counts():
     counts = {}
@@ -82,11 +98,10 @@ def host_page():
     for col, role in zip(cols, ROLES):
         with col:
             st.subheader(role)
-            # +1 button, also logs changes
-            counter_button("➕ Add", role, delta=1, callbacks=[log_change], key=f"inc_{role}")
-            # display
+            counter_button("➕ Add", role, delta=1, callbacks=[log_change, log_timestamp], key=f"inc_{role}")
+            
             st.markdown(f"## {st.session_state.counts[role]}")
-            # –1 button, no extra callbacks
+
             counter_button("➖ Remove", role, delta=-1, callbacks=None, key=f"dec_{role}")
 
         
