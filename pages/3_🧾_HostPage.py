@@ -113,11 +113,11 @@ st.set_page_config(layout="wide")
     
         
         
-if 'hostAccess' not in st.session_state:
-    st.session_state.hostAccess = False
+# if 'hostAccess' not in st.session_state:
+#     st.session_state.hostAccess = False
     
-if st.session_state.hostAccess == False:
-    host_login()
-else:
-    host_page()
+# if st.session_state.hostAccess == False:
+#     host_login()
+# else:
+host_page()
     
