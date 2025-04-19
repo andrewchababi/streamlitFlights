@@ -20,63 +20,7 @@ def save_counts(counts):
     with open(PERSIST_FILE, "w") as f:
         json.dump(counts, f)
 
-
-
-# def inc_role(role): 
-#     st.session_state.counts[role] += 1
-#     save_counts(st.session_state.counts)
-#     # add timestamp to csv
-        
-# def dec_role(role):
-#     print('decrement ----------------------' ,st.session_state.counts[role])
-#     if st.session_state.counts[role] > 0:
-#         st.session_state.counts[role] -= 1
-#         save_counts(st.session_state.counts)
-#         # need to decide if this removes timestamp from csv or not 
- 
- 
-# def increment_button(role, on_clicked):
-#     print('increment ', st.session_state.counts[role])
-#     st.button(
-#             "➕ Add Customer",
-#             key=f"inc_{role}",
-#             on_click=on_clicked,
-#         )
-
-# def decrement_button(role, on_clicked):
-#     print('increment ', st.session_state.counts[role])
-#     st.button(
-#             "➖ Remove Customer",
-#             key=f"dec_{role}",
-#             on_click=on_clicked,
-#         )
-
-# # --- App Startup --- 
-# st.set_page_config(layout='wide')
-# st.title('Host - Customer Counters')
-
-
-# # 1. Initialize session state from disk on first load
-# if "counts" not in st.session_state:
-#     st.session_state.counts = load_count()
-    
-# cols = st.columns(len(ROLES), gap='medium')
-
-
-
-
-
-# for col, role in zip(cols, ROLES):
-#     with col:
-#         st.subheader(role)
-        
-#         st.markdown(f"## {st.session_state.counts[role]}")
-#         # Increment button
-#         increment_button(role, inc_role(role))
-
-#         # Decrement button
-#         decrement_button(role, dec_role(role))
-        
+      
 def counter_button(
     label: str,
     role: str,
@@ -105,29 +49,56 @@ def counter_button(
         on_click=_on_click,
         args=(role,)
     )
-
-# ——— Streamlit App ———
-st.set_page_config(layout="wide")
-st.title("Host — Customer Counters")
-
-# load once
-if "counts" not in st.session_state:
-    st.session_state.counts = load_counts()
-
-cols = st.columns(len(ROLES), gap="medium")
-
+    
 # Example extra callback
 def log_change(role:str, new_value:int):
     print(f">>> {role} is now {new_value}")
+    
+def host_login():
+    st.title("🔒 Host Access Required")
+    st.write("Enter your password to access the scheduling page.")
+    true_password = "243"
+    password = st.text_input("Password", type="password", key="host_pwd")
 
-for col, role in zip(cols, ROLES):
-    with col:
-        st.subheader(role)
-        # +1 button, also logs changes
-        counter_button("➕ Add", role, delta=1, callbacks=[log_change], key=f"inc_{role}")
-        # display
-        st.markdown(f"## {st.session_state.counts[role]}")
-        # –1 button, no extra callbacks
-        counter_button("➖ Remove", role, delta=-1, callbacks=None, key=f"dec_{role}")
+    if st.button("Login", key="host_login_btn"):
+        if password == true_password:
+            st.success("Access granted!")
+            st.session_state.hostAccess = True
+            st.rerun()
+        else:
+            st.error("Incorrect password. Please try again.")
+            st.session_state.hostAccess = False
+
+def host_page():
+    # ——— Streamlit App ———
+    st.title("Host — Customer Counters")
+
+    # load once
+    if "counts" not in st.session_state:
+        st.session_state.counts = load_counts()
+
+    cols = st.columns(len(ROLES), gap="medium")
+
+    for col, role in zip(cols, ROLES):
+        with col:
+            st.subheader(role)
+            # +1 button, also logs changes
+            counter_button("➕ Add", role, delta=1, callbacks=[log_change], key=f"inc_{role}")
+            # display
+            st.markdown(f"## {st.session_state.counts[role]}")
+            # –1 button, no extra callbacks
+            counter_button("➖ Remove", role, delta=-1, callbacks=None, key=f"dec_{role}")
+
+        
+st.set_page_config(layout="wide")
+    
         
         
+if 'hostAccess' not in st.session_state:
+    st.session_state.hostAccess = False
+    
+if st.session_state.hostAccess == False:
+    host_login()
+else:
+    host_page()
+    

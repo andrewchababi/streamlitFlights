@@ -31,6 +31,8 @@ def navigation_component():
         if st.button("Scheduling 🗓️"):
             st.switch_page("pages/3_🗓️_Scheduling.py")
     with col2:
+        if st.button("Host"):
+            st.switch_page('pages/3_🧾_HostPage.py')
         if st.button("Log Out"):
             st.session_state["current_user"] = None
             st.session_state.access = False
