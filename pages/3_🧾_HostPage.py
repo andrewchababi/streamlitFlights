@@ -9,10 +9,6 @@ ROLES = ["Bartender", "Waiter 1 ", "Waiter 2 ", "Waiter 3 ", "Waiter 4 "]
 
 
 def log_timestamp(role: str, new_value: int, csv_path: str = "timestamps.csv"):
-    """
-    Append (role, timestamp) as a new row to the CSV.
-    If the file is new, write a header first.
-    """
     file_exists = os.path.exists(csv_path)
     with open(csv_path, mode="a", newline="") as f:
         writer = csv.writer(f)
@@ -22,6 +18,12 @@ def log_timestamp(role: str, new_value: int, csv_path: str = "timestamps.csv"):
         # 2) Always write your data row
         writer.writerow([role, datetime.now().isoformat()])
        
+
+def reset_button():
+    if st.button("🔄 Reset All Counters"):
+        st.session_state.counts = { role: 0 for role in ROLES }
+        save_counts(st.session_state.counts)
+        st.rerun()
 
 def load_counts():
     counts = {}
@@ -92,6 +94,8 @@ def host_page():
     # load once
     if "counts" not in st.session_state:
         st.session_state.counts = load_counts()
+
+    reset_button()
 
     cols = st.columns(len(ROLES), gap="medium")
 
