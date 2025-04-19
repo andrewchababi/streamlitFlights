@@ -55,7 +55,7 @@ def process_flights_to_df(url):
     new_df = flights_df[new_columns_of_interest]
 
     new_df = new_df.copy()
-    new_df['Gate'] = new_df['Gate'].str.extract('(\d+)')  # Extract digits
+    new_df['Gate'] = new_df['Gate'].str.extract('(\\d+)')  # Extract digits
     new_df = new_df.dropna()
     new_df['Gate'] = new_df['Gate'].astype(int)
 
