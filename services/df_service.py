@@ -63,8 +63,8 @@ def adjust_time_slot(time_str: str, offset_hours: float) -> str:
     return adjusted_time
 
 def distribute_passengers_for_row(time_str: str, passengers: int) -> list:
-    time_offsets = [-1.5, -1.0, -0.5]  # In hours
-    percentages = [0.25, 0.50, 0.25]
+    time_offsets = [-2.5, -2, -1.5 -1.0, -0.5]  # In hours
+    percentages = [0.2, 0.25, 0.40, 0.15, 0.05]
     
     distributions = []
     for offset, pct in zip(time_offsets, percentages):
@@ -74,8 +74,8 @@ def distribute_passengers_for_row(time_str: str, passengers: int) -> list:
     return distributions
 
 def distribute_passengers_for_row_monthly(time_str: str, passengers: int) -> list:
-    time_offsets = [-1.5, -1.0, -0.5]  # In hours
-    percentages = [0.25, 0.50, 0.25]
+    time_offsets = [-2.5, -2, -1.5 -1.0, -0.5]  # In hours
+    percentages = [0.2, 0.25, 0.40, 0.15, 0.05]
     
     distributions = []
     for offset, pct in zip(time_offsets, percentages):
@@ -135,7 +135,7 @@ def distribute_resto_client_df(dist_df):
 
 def distribute_resto_client_monthly_df(dist_df):
     resto_df = dist_df
-    resto_df['passengers'] = resto_df['passengers'] * 0.15
+    resto_df['passengers'] = resto_df['passengers'] * 0.1
     resto_df = client_rush_hours_monthly(resto_df)
     return resto_df
 

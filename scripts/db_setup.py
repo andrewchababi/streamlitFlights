@@ -37,7 +37,7 @@ def display_all():
     query = "SELECT * FROM users;"
     df = pd.read_sql_query(query, conn)
     conn.close()
-    print(df)
+    #print(df)
 
 def update_password(username, new_password):
     update_query = "UPDATE users SET passcode = ? WHERE username = ?"
