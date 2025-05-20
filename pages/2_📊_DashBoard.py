@@ -11,7 +11,9 @@ def dashboard():
     flights = get_session_flights()
     passenger_dist = passenger_distribution_df(flights.copy())
     flight_count = flights_per_hour_distribution_df(flights.copy())
-
+    flight_count_half_hour = flights_per_half_hour_distribution_df(flights.copy())
+    
+    
     hide_departed = st.checkbox("Hide Departed Flights", value=False)
 
     if hide_departed:
@@ -24,7 +26,8 @@ def dashboard():
         with col1:
             display_flights_df(flights)
             display_passenger_chart(passenger_dist)
-            display_flights_chart(flight_count)
+            # display_flights_chart(flight_count)
+            display_half_flights_chart(flight_count_half_hour)
            
         with col2:
             refresh_button()

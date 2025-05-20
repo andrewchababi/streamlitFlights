@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 from services.analytics_services import analytics
 from services.df_service import highlight_delayed
-from services.chartPlot_service import create_flights_chart, create_passenger_dist_chart
+from services.chartPlot_service import create_flights_chart, create_passenger_dist_chart, create_half_flights_chart
 
 current = st.session_state['current_user']
 
@@ -48,7 +48,14 @@ def display_flights_chart(flight_count: pd.DataFrame):
     st.subheader("Flights per Hour")
     st.altair_chart(f_chart, use_container_width=True)
     st.write('')
-            
+  
+def display_half_flights_chart(flight_count: pd.DataFrame):
+    f_chart = create_half_flights_chart(flight_count)
+
+    st.subheader("Flights per Half Hour")
+    st.altair_chart(f_chart, use_container_width=True)
+    st.write('')          
+
 def refresh_button():
     refresh = st.button('Update Data')
     if  refresh: 

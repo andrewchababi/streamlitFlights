@@ -107,3 +107,18 @@ def create_flights_chart(flight_count: pd.DataFrame):
     )
     
     return f_chart
+
+def create_half_flights_chart(flight_half_count:pd.DataFrame):
+    f_chart = alt.Chart(flight_half_count).mark_bar().encode(
+            x=alt.X('rounded_half_hour_time:N', title="Time Slots", sort=list(flight_half_count['rounded_half_hour_time']), axis=alt.Axis(labelAngle=0)),
+            y=alt.Y('flights_count:Q', title="Number of Flights"),
+            tooltip=[
+                alt.Tooltip('rounded_half_hour_time:N', title="Time"),
+                alt.Tooltip('flights_count:Q', title="Flights Count", format=',d')
+            ]
+        ).properties(
+            width=700,
+            height=400
+        )
+
+    return f_chart

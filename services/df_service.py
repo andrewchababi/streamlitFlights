@@ -196,3 +196,18 @@ def flights_per_hour_distribution_df(df, time_col='updatedTime'):
     flight_counts['flight_counts'] = flight_counts['flight_counts'].astype(int)
 
     return flight_counts
+
+def flights_per_half_hour_distribution_df(df: pd.DataFrame, time_col='updatedTime'):
+    df[time_col] = pd.to_datetime(df[time_col], errors='coerce')
+
+    df['rounded_half_hour_time'] = df[time_col].dt.round('30min').dt.strftime('%H:%M')
+
+    flights_count = df.groupby('rounded_half_hour_time').size().reset_index(name="flights_count")
+
+    all_half_hours = generate_halfhour_time_range().rename(columns={"updatedTime":'rounded_half_hour_time'})
+
+    flights_count = all_half_hours.merge(flights_count, on='rounded_half_hour_time', how='left').fillna(0)
+    
+    flights_count['flights_count'] = flights_count['flights_count'].astype(int)
+    
+    return flights_count
