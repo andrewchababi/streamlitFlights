@@ -11,6 +11,6 @@ def new_customer_display():
     st.subheader("🏬 New Customer?")
     st.write(
         "Are you a store manager interested in our services? "
-        "Contact our team at [sales@restoport.xyz](mailto:sales@restoport.xyz) "
+        "Contact our team at [vrai.nord.dev@gmail.com](mailto:vrai.nord.dev@gmail.com) "
         "for more information."
     )
