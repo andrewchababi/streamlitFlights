@@ -15,6 +15,7 @@ def login_component():
             st.success("✅ Login successful!")
             st.write(f"Welcome, {username}!")
             save_current_user(username)  
+            st.switch_page('pages/2_📊_DashBoard.py')
             st.rerun()
         else:
             st.error("❌ Invalid username or password. Please try again.")
