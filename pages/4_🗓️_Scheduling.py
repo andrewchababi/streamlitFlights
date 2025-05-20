@@ -9,17 +9,22 @@ st.set_page_config(layout="wide")
 
 def scheduling_log_in():
     true_password = st.session_state["current_user"].get('scheduling_code')
+    
+    st.title("Scheduling")
 
-    password = st.text_input("Enter Password to Access Scheduling", type="password")
-    if st.button("Login"):
-        if int(password) == true_password:
-            st.success("Access granted!")
-            st.session_state.access = True
-            st.rerun()
-        else:
-            st.error("Incorrect password. Please try again.")
-            st.session_state.access = False
-     
+    with st.form("scheduling_form"):
+        password = st.text_input("Enter Password to Access Scheduling", type="password")
+        submitted = st.form_submit_button("Login")
+        
+        if submitted:
+            if int(password) == true_password:
+                st.success("Access granted!")
+                st.session_state.access = True
+                st.rerun()
+            else:
+                st.error("Incorrect password. Please try again.")
+                st.session_state.access = False
+         
 
 def scheduling():
     st.title(f"Scheduling Analytics")
