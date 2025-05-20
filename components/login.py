@@ -27,13 +27,9 @@ def navigation_component():
     with col1:
         if st.button("Analytics 📊"):
             st.switch_page('pages/2_📊_DashBoard.py')
-        # if st.button("Tasks 📝 (Coming soon)"):
-        #     print("Todo")
         if st.button("Scheduling 🗓️"):
-            st.switch_page("pages/4_🗓️_Scheduling.py")
+            st.switch_page("pages/3_🗓️_Scheduling.py")
     with col2:
-        if st.button("Host"):
-            st.switch_page('pages/3_🧾_HostPage.py')
         if st.button("Log Out"):
             st.session_state["current_user"] = None
             st.session_state.access = False
