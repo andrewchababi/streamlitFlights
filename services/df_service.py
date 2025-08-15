@@ -164,6 +164,7 @@ def client_rush_hours_monthly(df):
     return df
     
 def passenger_distribution_df(df):
+    df = df[df['Status'] != "Cancelled"]
     df = flights_per_halfHour_df(df)
     df = round_time_to_halfhour(df)
     dist_df = distribute_passengers_df(df)
@@ -198,6 +199,8 @@ def flights_per_hour_distribution_df(df, time_col='updatedTime'):
     return flight_counts
 
 def flights_per_half_hour_distribution_df(df: pd.DataFrame, time_col='updatedTime'):
+    df = df[df['Status'] != "Cancelled"]
+
     df[time_col] = pd.to_datetime(df[time_col], errors='coerce')
 
     df['rounded_half_hour_time'] = df[time_col].dt.round('30min').dt.strftime('%H:%M')

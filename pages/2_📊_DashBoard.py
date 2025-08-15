@@ -9,6 +9,7 @@ st.set_page_config(layout="wide")
 def dashboard():
     st.title(f"Flight Analytics")
     flights = get_session_flights()
+    # Taking out canceled flights from the calculation
     passenger_dist = passenger_distribution_df(flights.copy())
     flight_count = flights_per_hour_distribution_df(flights.copy())
     flight_count_half_hour = flights_per_half_hour_distribution_df(flights.copy())

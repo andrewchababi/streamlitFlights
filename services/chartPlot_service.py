@@ -4,6 +4,8 @@ import seaborn as sns
 import altair as alt
 
 def plot_flights_by_hour(df, time_col="updatedTime"):
+    df = df[df['Status'] != "Cancelled"]
+
     # Ensure pyplot import is correct first
     df[time_col] = pd.to_datetime(df[time_col], errors='coerce')
     df['rounded_time'] = df[time_col].dt.round("h")
@@ -32,8 +34,9 @@ def plot_flights_by_hour(df, time_col="updatedTime"):
     plt.tight_layout()
     return fig, ax
 
-def plot_passengers_by_hour(df, time_col="updatedTime", passenger_col="Passengers"):
-    
+def plot_passengers_by_hour(df: pd.DataFrame, time_col="updatedTime", passenger_col="Passengers"):
+    df = df[df['Status'] != "Cancelled"]
+
     # Convert time column to datetime
     df[time_col] = pd.to_datetime(df[time_col], errors='coerce')
     df['rounded_time'] = df[time_col].dt.round("h")
