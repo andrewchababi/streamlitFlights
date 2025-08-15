@@ -19,6 +19,8 @@ def flights_left(df):
 def total_delayed_flights(df):
     return len(df[df['Status'] == 'Delayed'])
 
+def total_cancelled_flights(df):
+    return len(df[df['Status'] == 'Cancelled'])
 
 def prep_closing_time(df):
     last_flight = df.tail(1).copy()
@@ -41,6 +43,7 @@ def analytics(df):
     pre_close, close = prep_closing_time(df)
     fl = flights_left(df)
     delayed_flights = total_delayed_flights(df)
+    cancelled_flights = total_cancelled_flights(df)
     
-    return fl, delayed_flights, top_destinations, total_f, pre_close, close
+    return fl, delayed_flights, cancelled_flights, top_destinations, total_f, pre_close, close
     

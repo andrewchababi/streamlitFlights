@@ -7,11 +7,12 @@ from services.chartPlot_service import create_flights_chart, create_passenger_di
 current = st.session_state['current_user']
 
 def show_analytics(df):
-    fl, delayed_flights, top_dest, total, pre_close, close = analytics(df)
+    fl, delayed_flights, canceled_flights, top_dest, total, pre_close, close = analytics(df)
     
     st.metric("Total Flights", total)
     st.metric("Flights Left", fl)
     st.metric("Delayed flights", delayed_flights)
+    st.metric("Canceled flights", canceled_flights)
     
     st.subheader("Top 3 Destinations")
     st.dataframe(top_dest, use_container_width=True, hide_index=True)
