@@ -15,7 +15,7 @@ headers = {
     "Referer": "https://www.admtl.com/en/departures",
         # ⚠️ Optional but sometimes required:
         # Copy-paste the latest __cf_bm cookie if Cloudflare still blocks it
-        # "Cookie": "__cf_bm=XXXX; CookieConsentPolicy=0:1; LSKey-c$CookieConsentPolicy=0:1"
+        "Cookie": "__cf_bm=XXXX; CookieConsentPolicy=0:1; LSKey-c$CookieConsentPolicy=0:1"
 }
 
 
