@@ -6,7 +6,6 @@ import streamlit as st
 # Define the URL and payload for fetching flight data
 url = "https://www.admtl.com/en-CA/webruntime/api/apex/execute?language=en-CA&asGuest=true&htmlEncode=false"
 
-
 headers = {
     "Content-Type": "application/json; charset=utf-8",
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
@@ -32,9 +31,10 @@ payload = {
 
 def fetch_flight_data(url):
     scraper = cloudscraper.create_scraper(browser={'browser': 'chrome', 'platform': 'windows', 'mobile': False})
-    scraper.get(url)
+    scraper.get("https://www.admtl.com/en-CA/flights/departures")
+
     # response = cloudscraper.create_scraper().post(url,headers=headers, json=payload)
-    response = scraper.post(url, data=json.dumps(payload), headers=headers)
+    response = scraper.post(url, json=json.dumps(payload), headers=headers)
     response.raise_for_status()
     return response
 
