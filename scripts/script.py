@@ -8,9 +8,16 @@ url = "https://www.admtl.com/en-CA/webruntime/api/apex/execute?language=en-CA&as
 
 
 headers = {
-  'Content-Type': 'application/json',
-  'Cookie': '__cf_bm=guDZ.e794DvV73axCuXS6mXK27F4p5pfJp7F8sXGf4c-1761589000-1.0.1.1-Uy1Htes3cPS72_ukq8GxXk8tPEEgGhql2zFxMhrE9kAHilxMlwnJU9wKuBCNlEsBxr6iGYv6Y7dmVhl02eNtwFmxlVOyefl58guNgmCLDDw; CookieConsentPolicy=0:1; LSKey-c$CookieConsentPolicy=0:1'
+    'Content-Type': 'application/json',
+    'Cookie': '__cf_bm=guDZ.e794DvV73axCuXS6mXK27F4p5pfJp7F8sXGf4c-1761589000-1.0.1.1-Uy1Htes3cPS72_ukq8GxXk8tPEEgGhql2zFxMhrE9kAHilxMlwnJU9wKuBCNlEsBxr6iGYv6Y7dmVhl02eNtwFmxlVOyefl58guNgmCLDDw; CookieConsentPolicy=0:1; LSKey-c$CookieConsentPolicy=0:1',
+    "Content-Type": "application/json",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+    "Referer": "https://www.admtl.com/en/departures",
+        # ⚠️ Optional but sometimes required:
+        # Copy-paste the latest __cf_bm cookie if Cloudflare still blocks it
+        # "Cookie": "__cf_bm=XXXX; CookieConsentPolicy=0:1; LSKey-c$CookieConsentPolicy=0:1"
 }
+
 
 payload = {
     "namespace": "",
