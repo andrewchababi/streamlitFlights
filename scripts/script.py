@@ -26,7 +26,7 @@ payload = {
 
 
 def fetch_flight_data(url):
-    response = cloudscraper.create_scraper().post(url, json=payload)
+    response = cloudscraper.create_scraper().post(url,headers=headers, json=payload)
     response.raise_for_status()
     return response
 
