@@ -84,26 +84,27 @@ def process_flights_to_df(url):
         output_file = "flights_today.xlsx"
         flights_df.to_excel(output_file, index=False)
         print(f"[flight_analytics] Saved flights to Excel file: {output_file}")
-    except Exception as e:
-        print(f"[flight_analytics] ERROR while running sanity check: {e}")
 
-    flights_df.rename(columns={
+
+        flights_df.rename(columns={
         'TerminalGate': 'Gate',
         'FormattedScheduledTime': 'time',
         'FormattedUpdatedTime': 'updatedTime',
         'OperationalStatusDescription': 'Status',
         'PublicDisplayFlightNumber' : 'Flight number',
-    }, inplace=True)
+        }, inplace=True)
 
-    new_columns_of_interest = ['AirlineName', 'Gate', 'time', 'updatedTime', 'AirportName', 'Status', 'Flight number']
-    new_df = flights_df[new_columns_of_interest]
-
-    new_df = new_df.copy()
-    new_df['Gate'] = new_df['Gate'].str.extract('(\\d+)')  # Extract digits
-    new_df = new_df.dropna()
-    new_df['Gate'] = new_df['Gate'].astype(int)
-
-    return new_df
+        new_columns_of_interest = ['AirlineName', 'Gate', 'time', 'updatedTime', 'AirportName', 'Status', 'Flight number']
+        new_df = flights_df[new_columns_of_interest]
+    
+        new_df = new_df.copy()
+        new_df['Gate'] = new_df['Gate'].str.extract('(\\d+)')  # Extract digits
+        new_df = new_df.dropna()
+        new_df['Gate'] = new_df['Gate'].astype(int)
+    
+        return new_df
+    except Exception as e:
+        print(f"[flight_analytics] ERROR while running sanity check: {e}")
 
 def extract_flight_data_excel(file_path="monthly_flights.xlsx"):
 
