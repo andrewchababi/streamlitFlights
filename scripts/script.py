@@ -14,6 +14,8 @@ headers = {
     "Accept": "*/*",
 }
 
+
+
 payload = {
     "namespace": "",
     "classname": "@udd/01pMm00000AWKuH",
@@ -28,63 +30,32 @@ payload = {
 
 
 def fetch_flight_data(url):
-    print("[flight_analytics] Starting flight data fetch...")
     scraper = cloudscraper.create_scraper(browser={'browser': 'chrome', 'platform': 'windows', 'mobile': False})
-    print("[flight_analytics] Initial GET to departures page...")
     scraper.get("https://www.admtl.com/en-CA/flights/departures")
 
-    print("[flight_analytics] Sending POST request for flights...")
-    response = scraper.post(url, json=payload, headers=headers)
-    print(f"[flight_analytics] Response received with status code: {response.status_code}")
-    if response.status_code != 200:
-        print("[flight_analytics] Non-200 response body (truncated):")
-        try:
-            print(response.text[:1000])
-        except Exception:
-            print("[flight_analytics] Unable to print response text.")
+    # response = cloudscraper.create_scraper().post(url,headers=headers, json=payload)
+    response = scraper.post(url, json=json.dumps(payload), headers=headers)
     response.raise_for_status()
-    print("[flight_analytics] Flight data fetch successful.")
     return response
 
-
 def parse_json_content(response_content):
-    print("[flight_analytics] Parsing JSON content...")
     return json.loads(response_content)
 
-
 def format_json_data(json_data):
-    print("[flight_analytics] Formatting JSON data...")
     return json.dumps(json_data, indent=4)
 
-
 def convert_to_dataframe(json_data, key='returnValue', section='flightsForToday'):
-    print(f"[flight_analytics] Converting JSON to DataFrame (key='{key}', section='{section}')...")
-    df = pd.json_normalize(json_data[key][section])
-    print(f"[flight_analytics] DataFrame created with {len(df)} rows.")
-    return df
+    return pd.json_normalize(json_data[key][section])
 
 @st.cache_data(ttl=3600)
 def process_flights_to_df(url):
-    # response = fetch_flight_data(url)
-    # print(f"HTTP Status Code: {response.status_code}")
-
-    # raw_data = response.content
-    # structured_data = parse_json_content(raw_data)
-
-    # flights_df = convert_to_dataframe(structured_data)
-
-    print("[flight_analytics] Script started as __main__.")
     response = fetch_flight_data(url)
-    json_data = parse_json_content(response.content)
-    flights_df = convert_to_dataframe(json_data)
+    print(f"HTTP Status Code: {response.status_code}")
 
-    print(f"[flight_analytics] Sanity check: fetched {len(flights_df)} flights for today.")
-    # Save to Excel so you can inspect the data easily
+    raw_data = response.content
+    structured_data = parse_json_content(raw_data)
 
-    output_file = "flights_today.xlsx"
-    flights_df.to_excel(output_file, index=False)
-
-    print(f"[flight_analytics] Saved flights to Excel file: {output_file}")
+    flights_df = convert_to_dataframe(structured_data)
 
     flights_df.rename(columns={
         'TerminalGate': 'Gate',
@@ -96,8 +67,8 @@ def process_flights_to_df(url):
 
     new_columns_of_interest = ['AirlineName', 'Gate', 'time', 'updatedTime', 'AirportName', 'Status', 'Flight number']
     new_df = flights_df[new_columns_of_interest]
-    new_df = new_df.copy()
 
+    new_df = new_df.copy()
     new_df['Gate'] = new_df['Gate'].str.extract('(\\d+)')  # Extract digits
     new_df = new_df.dropna()
     new_df['Gate'] = new_df['Gate'].astype(int)
