@@ -74,37 +74,35 @@ def process_flights_to_df(url):
     # flights_df = convert_to_dataframe(structured_data)
 
     print("[flight_analytics] Script started as __main__.")
-    try:
-        response = fetch_flight_data(url)
-        json_data = parse_json_content(response.content)
-        flights_df = convert_to_dataframe(json_data)
-        print(f"[flight_analytics] Sanity check: fetched {len(flights_df)} flights for today.")
+    response = fetch_flight_data(url)
+    json_data = parse_json_content(response.content)
+    flights_df = convert_to_dataframe(json_data)
 
-        # Save to Excel so you can inspect the data easily
-        output_file = "flights_today.xlsx"
-        flights_df.to_excel(output_file, index=False)
-        print(f"[flight_analytics] Saved flights to Excel file: {output_file}")
+    print(f"[flight_analytics] Sanity check: fetched {len(flights_df)} flights for today.")
+    # Save to Excel so you can inspect the data easily
 
+    output_file = "flights_today.xlsx"
+    flights_df.to_excel(output_file, index=False)
 
-        flights_df.rename(columns={
+    print(f"[flight_analytics] Saved flights to Excel file: {output_file}")
+
+    flights_df.rename(columns={
         'TerminalGate': 'Gate',
         'FormattedScheduledTime': 'time',
         'FormattedUpdatedTime': 'updatedTime',
         'OperationalStatusDescription': 'Status',
         'PublicDisplayFlightNumber' : 'Flight number',
-        }, inplace=True)
+    }, inplace=True)
 
-        new_columns_of_interest = ['AirlineName', 'Gate', 'time', 'updatedTime', 'AirportName', 'Status', 'Flight number']
-        new_df = flights_df[new_columns_of_interest]
-    
-        new_df = new_df.copy()
-        new_df['Gate'] = new_df['Gate'].str.extract('(\\d+)')  # Extract digits
-        new_df = new_df.dropna()
-        new_df['Gate'] = new_df['Gate'].astype(int)
-    
-        return new_df
-    except Exception as e:
-        print(f"[flight_analytics] ERROR while running sanity check: {e}")
+    new_columns_of_interest = ['AirlineName', 'Gate', 'time', 'updatedTime', 'AirportName', 'Status', 'Flight number']
+    new_df = flights_df[new_columns_of_interest]
+    new_df = new_df.copy()
+
+    new_df['Gate'] = new_df['Gate'].str.extract('(\\d+)')  # Extract digits
+    new_df = new_df.dropna()
+    new_df['Gate'] = new_df['Gate'].astype(int)
+
+    return new_df
 
 def extract_flight_data_excel(file_path="monthly_flights.xlsx"):
 
