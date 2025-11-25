@@ -34,7 +34,7 @@ def fetch_flight_data(url):
     scraper.get("https://www.admtl.com/en-CA/flights/departures")
 
     # response = cloudscraper.create_scraper().post(url,headers=headers, json=payload)
-    response = scraper.post(url, json=json.dumps(payload), headers=headers)
+    response = scraper.post(url, json=payload, headers=headers)
     response.raise_for_status()
     return response
 
