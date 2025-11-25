@@ -27,11 +27,9 @@ payload = {
 }
 
 
-def fetch_flight_data(url: str):
+def fetch_flight_data(url):
     print("[flight_analytics] Starting flight data fetch...")
-    scraper = cloudscraper.create_scraper(
-        browser={'browser': 'chrome', 'platform': 'windows', 'mobile': False}
-    )
+    scraper = cloudscraper.create_scraper(browser={'browser': 'chrome', 'platform': 'windows', 'mobile': False})
     print("[flight_analytics] Initial GET to departures page...")
     scraper.get("https://www.admtl.com/en-CA/flights/departures")
 
@@ -49,7 +47,7 @@ def fetch_flight_data(url: str):
     return response
 
 
-def parse_json_content(response_content: bytes):
+def parse_json_content(response_content):
     print("[flight_analytics] Parsing JSON content...")
     return json.loads(response_content)
 
@@ -59,118 +57,85 @@ def format_json_data(json_data):
     return json.dumps(json_data, indent=4)
 
 
-def convert_to_dataframe(json_data, key: str = 'returnValue', section: str = 'flightsForToday') -> pd.DataFrame:
+def convert_to_dataframe(json_data, key='returnValue', section='flightsForToday'):
     print(f"[flight_analytics] Converting JSON to DataFrame (key='{key}', section='{section}')...")
     df = pd.json_normalize(json_data[key][section])
     print(f"[flight_analytics] DataFrame created with {len(df)} rows.")
     return df
 
-
 @st.cache_data(ttl=3600)
-def process_flights_to_df(url: str) -> pd.DataFrame:
-    """
-    Fetch flights from the YUL API and return a cleaned dataframe
-    with the key columns you use in the dashboard.
-    """
-    response = fetch_flight_data(url)
-    print(f"[flight_analytics] HTTP Status Code inside process_flights_to_df: {response.status_code}")
+def process_flights_to_df(url):
+    # response = fetch_flight_data(url)
+    # print(f"HTTP Status Code: {response.status_code}")
 
-    raw_data = response.content
-    structured_data = parse_json_content(raw_data)
+    # raw_data = response.content
+    # structured_data = parse_json_content(raw_data)
 
-    flights_df = convert_to_dataframe(structured_data)
+    # flights_df = convert_to_dataframe(structured_data)
 
-    # Rename columns to friendlier names
+    print("[flight_analytics] Script started as __main__.")
+    try:
+        response = fetch_flight_data(url)
+        json_data = parse_json_content(response.content)
+        flights_df = convert_to_dataframe(json_data)
+        print(f"[flight_analytics] Sanity check: fetched {len(flights_df)} flights for today.")
+
+        # Save to Excel so you can inspect the data easily
+        output_file = "flights_today.xlsx"
+        flights_df.to_excel(output_file, index=False)
+        print(f"[flight_analytics] Saved flights to Excel file: {output_file}")
+    except Exception as e:
+        print(f"[flight_analytics] ERROR while running sanity check: {e}")
+
     flights_df.rename(columns={
         'TerminalGate': 'Gate',
         'FormattedScheduledTime': 'time',
         'FormattedUpdatedTime': 'updatedTime',
         'OperationalStatusDescription': 'Status',
-        'PublicDisplayFlightNumber': 'Flight number',
-        'AirlineName': 'AirlineName',
-        'AirportName': 'AirportName',
+        'PublicDisplayFlightNumber' : 'Flight number',
     }, inplace=True)
 
-    # Select and clean the columns of interest
-    new_columns_of_interest = [
-        'AirlineName',
-        'Gate',
-        'time',
-        'updatedTime',
-        'AirportName',
-        'Status',
-        'Flight number'
-    ]
-    print("[flight_analytics] Filtering columns of interest...")
-    new_df = flights_df[new_columns_of_interest].copy()
+    new_columns_of_interest = ['AirlineName', 'Gate', 'time', 'updatedTime', 'AirportName', 'Status', 'Flight number']
+    new_df = flights_df[new_columns_of_interest]
 
-    # Clean up gate to be integer only
-    print("[flight_analytics] Cleaning Gate column...")
-    new_df['Gate'] = new_df['Gate'].astype(str).str.extract(r'(\d+)')
-    new_df = new_df.dropna(subset=['Gate'])
+    new_df = new_df.copy()
+    new_df['Gate'] = new_df['Gate'].str.extract('(\\d+)')  # Extract digits
+    new_df = new_df.dropna()
     new_df['Gate'] = new_df['Gate'].astype(int)
 
-    print(f"[flight_analytics] Final processed flights DataFrame shape: {new_df.shape}")
     return new_df
 
+def extract_flight_data_excel(file_path="monthly_flights.xlsx"):
 
-def extract_flight_data_excel(file_path: str = "monthly_flights.xlsx") -> pd.DataFrame:
-    print(f"[flight_analytics] Reading Excel file: {file_path}")
     df = pd.read_excel(file_path, skiprows=5)
-    print(f"[flight_analytics] Raw rows loaded from Excel: {len(df)}")
-
+    
     df.columns = df.columns.str.strip()
-
+    
     # Ensure the Date column is in datetime format
     df["Date"] = pd.to_datetime(df["Date"], errors='coerce').dt.strftime("%Y-%m-%d")
 
-    df["time"] = pd.to_datetime(
-        df["Heure plan. / Sched. Time"],
-        format="%H:%M:%S",
-        errors="coerce"
-    ).dt.strftime("%H:%M:%S")
+    df["time"] = pd.to_datetime(df["Heure plan. / Sched. Time"], format="%H:%M:%S", errors="coerce").dt.strftime("%H:%M:%S")
 
     df.rename(columns={
         "Compagnie aérienne/ Airline": "Airline",
         "No. Vol / Flight no.": "Flight Number",
         "Terminal": "Terminal"
-    }, inplace=True)
+    }, inplace = True)
 
     df["Flight number"] = df["Airline"].astype(str) + df["Flight Number"].astype(str)
-    print("[flight_analytics] Created combined 'Flight number' column.")
-
+    
     international_df = df[df["Terminal"] == "I"].reset_index(drop=True)
-    print(f"[flight_analytics] Filtered international flights: {len(international_df)} rows.")
 
     international_df.index = international_df.index + 1
-
+    
     extracted_df = international_df[["Date", "time", "Flight number", "Destination"]]
-    print(f"[flight_analytics] Final extracted DataFrame shape: {extracted_df.shape}")
-
+    
     return extracted_df
 
+def unique_international_dest(df):
 
-def unique_international_dest(df: pd.DataFrame) -> set:
-    print("[flight_analytics] Calculating unique international destinations...")
     data = df['Destination']
+
     unique_destinations = set(data)
-    print(f"[flight_analytics] Found {len(unique_destinations)} unique destinations.")
+
     return unique_destinations
-
-
-if __name__ == "__main__":
-    """
-    Simple sanity check when running this script directly.
-    It will try to fetch today's flights, print basic info,
-    and save the results to an Excel file.
-    """
-    print("[flight_analytics] Script started as __main__.")
-    try:
-        df_today = process_flights_to_df(url)
-        print(f"[flight_analytics] Sanity check: processed {len(df_today)} flights for today.")
-
-        output_file = "flights_today_processed.xlsx"
-        df_today.to_excel(output_file, index=False)
-        print(f"[flight_analytics] Saved flights to Excel file: {output_file}")
-    except Exception as e:
-        print(f"[flight_analytics] ERROR while running sanity check: {e}")
