@@ -213,22 +213,22 @@ def unique_international_dest(df):
     return unique_destinations
 
 
-if _name_ == "_main_":
-    """
-    Simple sanity check when running this script directly.
-    It will try to fetch today's flights, print basic info,
-    and save the results to an Excel file.
-    """
-    print("[flight_analytics] Script started as _main_.")
-    try:
-        response = fetch_flight_data(url)
-        json_data = parse_json_content(response.content)
-        df = convert_to_dataframe(json_data)
-        print(f"[flight_analytics] Sanity check: fetched {len(df)} flights for today.")
+# if _name_ == "_main_":
+#     """
+#     Simple sanity check when running this script directly.
+#     It will try to fetch today's flights, print basic info,
+#     and save the results to an Excel file.
+#     """
+#     print("[flight_analytics] Script started as _main_.")
+#     try:
+#         response = fetch_flight_data(url)
+#         json_data = parse_json_content(response.content)
+#         df = convert_to_dataframe(json_data)
+#         print(f"[flight_analytics] Sanity check: fetched {len(df)} flights for today.")
 
-        # Save to Excel so you can inspect the data easily
-        output_file = "flights_today.xlsx"
-        df.to_excel(output_file, index=False)
-        print(f"[flight_analytics] Saved flights to Excel file: {output_file}")
-    except Exception as e:
-        print(f"[flight_analytics] ERROR while running sanity check: {e}")
+#         # Save to Excel so you can inspect the data easily
+#         output_file = "flights_today.xlsx"
+#         df.to_excel(output_file, index=False)
+#         print(f"[flight_analytics] Saved flights to Excel file: {output_file}")
+#     except Exception as e:
+#         print(f"[flight_analytics] ERROR while running sanity check: {e}")
