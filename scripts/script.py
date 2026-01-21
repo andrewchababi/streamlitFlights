@@ -1,7 +1,9 @@
 import json
+from pathlib import Path
 import pandas as pd
 import cloudscraper
 import streamlit as st
+import requests
 
 # Define the URL and payload for fetching flight data
 url = "https://www.admtl.com/en-CA/webruntime/api/apex/execute?language=en-CA&asGuest=true&htmlEncode=false"
@@ -31,10 +33,10 @@ def fetch_flight_data(url):
     print("[flight_analytics] Starting flight data fetch...")
     scraper = cloudscraper.create_scraper(browser={'browser': 'chrome', 'platform': 'windows', 'mobile': False})
     print("[flight_analytics] Initial GET to departures page...")
-    scraper.get("https://www.admtl.com/en-CA/flights/departures")
+    scraper.get("https://www.admtl.com/en-CA/flights/departures", timeout=20)
 
     print("[flight_analytics] Sending POST request for flights...")
-    response = scraper.post(url, json=payload, headers=headers)
+    response = scraper.post(url, json=payload, headers=headers, timeout=20)
     print(f"[flight_analytics] Response received with status code: {response.status_code}")
     if response.status_code != 200:
         print("[flight_analytics] Non-200 response body (truncated):")
@@ -45,6 +47,18 @@ def fetch_flight_data(url):
     response.raise_for_status()
     print("[flight_analytics] Flight data fetch successful.")
     return response
+
+
+def load_fallback_flights():
+    fallback_path = Path(__file__).resolve().parents[1] / "flights_today_processed.xlsx"
+    if not fallback_path.exists():
+        raise FileNotFoundError(f"Fallback file not found: {fallback_path}")
+    df = pd.read_excel(fallback_path)
+    expected = {'AirlineName', 'Gate', 'time', 'updatedTime', 'AirportName', 'Status', 'Flight number'}
+    missing = expected - set(df.columns)
+    if missing:
+        raise ValueError(f"Fallback file missing columns: {sorted(missing)}")
+    return df
 
 
 def parse_json_content(response_content):
@@ -66,13 +80,18 @@ def convert_to_dataframe(json_data, key='returnValue', section='flightsForToday'
 
 @st.cache_data(ttl=3600)
 def process_flights_to_df(url):
-    response = fetch_flight_data(url)
-    print(f"HTTP Status Code: {response.status_code}")
+    try:
+        response = fetch_flight_data(url)
+        print(f"HTTP Status Code: {response.status_code}")
 
-    raw_data = response.content
-    structured_data = parse_json_content(raw_data)
+        raw_data = response.content
+        structured_data = parse_json_content(raw_data)
 
-    flights_df = convert_to_dataframe(structured_data)
+        flights_df = convert_to_dataframe(structured_data)
+    except (requests.RequestException, json.JSONDecodeError, KeyError, ValueError) as exc:
+        st.warning("Live flight fetch failed. Using cached fallback data.")
+        print(f"[flight_analytics] Fetch failed: {exc}")
+        flights_df = load_fallback_flights()
 
     flights_df.rename(columns={
         'TerminalGate': 'Gate',
