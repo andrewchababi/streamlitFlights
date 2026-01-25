@@ -1,5 +1,7 @@
 import json
 from pathlib import Path
+from datetime import datetime, timezone
+import random
 import pandas as pd
 import cloudscraper
 import streamlit as st
@@ -27,6 +29,10 @@ payload = {
     },
     "cacheable": False
 }
+
+CACHE_DIR = Path(__file__).resolve().parents[1] / "data_cache"
+CACHE_PATH = CACHE_DIR / "flights_cache.pkl"
+META_PATH = CACHE_DIR / "flights_cache_meta.json"
 
 
 def fetch_flight_data(url):
@@ -78,17 +84,64 @@ def convert_to_dataframe(json_data, key='returnValue', section='flightsForToday'
     return df
 
 
+def _load_cached_flights():
+    if not CACHE_PATH.exists() or not META_PATH.exists():
+        return None, None
+    try:
+        meta = json.loads(META_PATH.read_text(encoding="utf-8"))
+        cached_df = pd.read_pickle(CACHE_PATH)
+        return cached_df, meta
+    except Exception as exc:
+        print(f"[flight_analytics] Failed to load cache: {exc}")
+        return None, None
+
+
+def _save_cached_flights(df, refresh_minutes):
+    CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    df.to_pickle(CACHE_PATH)
+    meta = {
+        "fetched_at_utc": datetime.now(timezone.utc).isoformat(),
+        "refresh_minutes": refresh_minutes,
+    }
+    META_PATH.write_text(json.dumps(meta, indent=2), encoding="utf-8")
+
+
+def _cache_is_fresh(meta):
+    try:
+        fetched_at = datetime.fromisoformat(meta["fetched_at_utc"])
+        refresh_minutes = int(meta["refresh_minutes"])
+    except Exception:
+        return False
+    age_seconds = (datetime.now(timezone.utc) - fetched_at).total_seconds()
+    return age_seconds < (refresh_minutes * 60)
+
+
 @st.cache_data(ttl=3600)
 def process_flights_to_df(url):
     response = None
+    cached_df, meta = _load_cached_flights()
+    if cached_df is not None and meta is not None and _cache_is_fresh(meta):
+        print("[flight_analytics] Using cached flights data.")
+        flights_df = cached_df
+    else:
+        if cached_df is not None and meta is not None:
+            print("[flight_analytics] Cache is stale; fetching fresh data.")
+        else:
+            print("[flight_analytics] Cache missing; fetching fresh data.")
     try:
-        response = fetch_flight_data(url)
-        print(f"HTTP Status Code: {response.status_code}")
+        if cached_df is not None and meta is not None and _cache_is_fresh(meta):
+            pass
+        else:
+            response = fetch_flight_data(url)
+            print(f"HTTP Status Code: {response.status_code}")
 
-        raw_data = response.content
-        structured_data = parse_json_content(raw_data)
+            raw_data = response.content
+            structured_data = parse_json_content(raw_data)
 
-        flights_df = convert_to_dataframe(structured_data)
+            flights_df = convert_to_dataframe(structured_data)
+            refresh_minutes = random.randint(5, 15)
+            _save_cached_flights(flights_df, refresh_minutes)
+            print(f"[flight_analytics] Cached flights for {refresh_minutes} minutes.")
     except (requests.RequestException, json.JSONDecodeError, KeyError, ValueError) as exc:
         print("[flight_analytics] Live fetch failed; fallback disabled for debugging.")
         print(f"[flight_analytics] Error type: {type(exc).__name__}")
