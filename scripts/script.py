@@ -80,6 +80,7 @@ def convert_to_dataframe(json_data, key='returnValue', section='flightsForToday'
 
 @st.cache_data(ttl=3600)
 def process_flights_to_df(url):
+    response = None
     try:
         response = fetch_flight_data(url)
         print(f"HTTP Status Code: {response.status_code}")
@@ -89,9 +90,18 @@ def process_flights_to_df(url):
 
         flights_df = convert_to_dataframe(structured_data)
     except (requests.RequestException, json.JSONDecodeError, KeyError, ValueError) as exc:
-        st.warning("Live flight fetch failed. Using cached fallback data.")
-        print(f"[flight_analytics] Fetch failed: {exc}")
-        flights_df = load_fallback_flights()
+        print("[flight_analytics] Live fetch failed; fallback disabled for debugging.")
+        print(f"[flight_analytics] Error type: {type(exc).__name__}")
+        print(f"[flight_analytics] Error details: {exc}")
+        if response is not None:
+            try:
+                print(f"[flight_analytics] Response status: {response.status_code}")
+                print(f"[flight_analytics] Response headers: {dict(response.headers)}")
+                print(f"[flight_analytics] Response body (truncated): {response.text[:1000]}")
+            except Exception as debug_exc:
+                print(f"[flight_analytics] Failed to dump response: {debug_exc}")
+        st.error("Live flight fetch failed. Check logs for details.")
+        raise
 
     flights_df.rename(columns={
         'TerminalGate': 'Gate',
